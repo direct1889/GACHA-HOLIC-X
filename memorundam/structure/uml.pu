@@ -1,0 +1,155 @@
+@startuml uml.png
+
+title <size:18> Class Structure </size>
+
+
+package Main {
+
+	package Gacha {
+
+		enum Rarity
+
+		class Content <struct> {
+			+Rarity rarity
+			+Name name
+		}
+		Content o-down- Rarity
+
+		interface IResult {
+			+Content Content
+			+bool IsWants
+		}
+		IResult <|.down. Result
+
+		Result o-down- Content
+
+
+		class Prob <struct> {
+			+int Accurate
+			+float Approximation01
+			+bool Is1
+			+bool Is0
+		}
+
+
+		interface IOdds {
+			+Rarity Roulette()
+		}
+		class Odds {
+			-IRODic<Rarity, Prob> Probs
+			+Rarity Roulette()
+		}
+		IOdds <|.down. Odds
+
+		Odds o-down- Prob
+
+
+		interface IOddsPreferences {
+			+IOdds Odds
+			+Prob OddsInRarity
+		}
+		IOddsPreferences <|.down. OddsPreferences
+
+		OddsPreferences o-down- IOdds
+		OddsPreferences o-down- Prob
+
+
+		interface IVendingMachineImpl {
+			+IResult Roll()
+		}
+		class VendingMachineImpl {
+			-Rarity Target
+			-IOddsPreferences Pref
+
+			+IResult Roll()
+		}
+		IVendingMachineImpl <|.down. VendingMachineImpl
+
+		VendingMachineImpl o-down- IOddsPreferences
+		IResult <-right- IVendingMachineImpl
+
+
+		interface IROReVendingMachine {
+			+int RollCount
+			+IObservable<IResult> OnRoll
+		}
+
+		class VendingMachine {
+			-IVendingMachineImpl m_vendor
+			-IDisposable m_rollStream
+			-Subject<IResult> m_onRollStream
+
+			+int RollCount
+			+IObservable<IResult> OnRoll
+
+			+void RollOnce()
+			+void RollEndless()
+			+void StopRolling()
+		}
+		IROReVendingMachine <|.down. VendingMachine
+		VendingMachine o-down- IVendingMachineImpl
+
+
+		package UI {
+
+			interface IIndicator {
+				+void Clear()
+			}
+			interface IIndicator_T {
+				+void Show(T obj)
+			}
+			IIndicator <|.down. IIndicator_T
+			abstract TextIndicator_T {
+				#TextMeshPro Text
+				+Func<T, string> Converter { set; }
+				#void Awake()
+				+void Show(T obj)
+				+void Clear()
+			}
+			IIndicator_T <|.down. TextIndicator_T
+
+			class RarityUI
+			IIndicator_T <|.left. RarityUI
+			Rarity <-left- RarityUI
+			class ContentUI
+			IIndicator_T <|.left. ContentUI
+			RarityUI -down-o ContentUI
+			Content <-left- ContentUI
+			class IsWantsUI
+			TextIndicator_T <|-left- IsWantsUI
+			class NumberUI
+			TextIndicator_T <|-left- NumberUI
+
+			class ResultUI {
+				-IRORxVendingMachine Vendor
+				-IIndicator<Content> Content
+				-IIndicator<bool> IsWants
+				+void Show(IResult)
+				+void Clear()
+			}
+			IIndicator_T <|.left. ResultUI
+			IResult <-left- ResultUI
+			ContentUI -down-o ResultUI
+			IsWantsUI -down-o ResultUI
+			NumberUI -down-o ResultUI
+
+
+			class VendingMachineUI {
+				-IROReVendingMachine Vendor
+				-IIndicator<IResult> Result
+				+void Show(VendingMachine)
+				+void Clear()
+			}
+			IROReVendingMachine <-up- VendingMachineUI
+			ResultUI -down-o VendingMachineUI
+
+
+		}
+
+	}
+
+}
+
+
+@enduml
+

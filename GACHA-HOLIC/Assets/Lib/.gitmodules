@@ -1,0 +1,3 @@
+[submodule "HOGE/HAGE/"]
+  path = HOGE/HAGE/
+  url = git://github.com/direct1889/dUtility.git
