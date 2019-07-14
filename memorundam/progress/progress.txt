@@ -9,6 +9,9 @@ SE
 
 
 UI[in]
+	Odds.Sum == 1 判定
+	Oddsテンプレート
+	Vendor再生成タイミング
 
 かかった金額
 

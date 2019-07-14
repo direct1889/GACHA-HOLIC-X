@@ -22,6 +22,7 @@ namespace Main {
             public VendingMachineImpl(Rarity target, IOddsPreferences pref) {
                 Target = target;
                 Pref = pref;
+                du.Test.LLog.Debug.Log(this);
             }
             #endregion
 
@@ -37,6 +38,10 @@ namespace Main {
                     return new Result(new Content(midResult), false);
                 }
             }
+            #endregion
+
+            #region override
+            public override string ToString() => $"Target: {Target}, OddsPref: {Pref}";
             #endregion
         }
 

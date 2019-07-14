@@ -40,14 +40,18 @@ namespace Main {
                 for (int i = 0; i < numberOfSignificantFigures; ++i) {
                     SignificantFigures *= 10;
                 }
-                ValueInt = Mathf.Clamp(value, 0, SignificantFigures);
+                ValueInt = System.Math.Min(System.Math.Max((int)value, 0), SignificantFigures);
             }
+            public Prob(uint value, int numberOfSignificantFigures)
+                : this((int)value, numberOfSignificantFigures) {}
             #endregion
 
             #region public
             /// <summary> 確率値に基づき当落を乱択 </summary>
             public bool Roulette() {
-                return Random.Range(1, SignificantFigures) <= ValueInt;
+                var value = Random.Range(1, SignificantFigures);
+                du.Test.LLog.Debug.LogError($"{value} in {ValueInt} ({value <= ValueInt}))");
+                return value <= ValueInt;
             }
             #endregion
 
@@ -111,6 +115,12 @@ namespace Main {
             public static bool operator>= (Prob a, Prob b) {
                 (var va, var vb) = Prob.AlignedFigures(a, b);
                 return va >= vb;
+            }
+            #endregion
+
+            #region static
+            public static Prob FromString(string str) {
+                return new Prob(System.Convert.ToUInt32(str), numberOfSignificantFiguresMax);
             }
             #endregion
         }

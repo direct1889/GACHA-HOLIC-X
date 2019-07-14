@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using System;
@@ -29,6 +28,9 @@ namespace Main.Gacha {
 
         /// <summary> 今、何連目? </summary>
         public int RollCount { get; private set; } = 0;
+
+        /// <summary> 各種設定項目 </summary>
+        [SerializeField] UI.ParamConfig m_params;
         #endregion
 
         #region getter
@@ -39,18 +41,7 @@ namespace Main.Gacha {
 
         #region mono
         private void Awake() {
-            m_vendor = new VendingMachineImpl(
-                Rarity.S5,
-                new OddsPreferences(
-                    new Dictionary<Rarity, Prob>{
-                        { Rarity.S1, new Prob(     0, 100000) },
-                        { Rarity.S2, new Prob( 23890, 100000) },
-                        { Rarity.S3, new Prob( 67530, 100000) },
-                        { Rarity.S4, new Prob(  5580, 100000) },
-                        { Rarity.S5, new Prob(  3000, 100000) }
-                    }
-                )
-            );
+            m_vendor = m_params.CreateVendor();
         }
         #endregion
 
@@ -60,12 +51,17 @@ namespace Main.Gacha {
         /// <summary> 出るまで引けば確定 </summary>
         public void RollEndless() {
             if (m_rollStream is null) {
+                // TODO: Timing
+                m_vendor = m_params.CreateVendor();
                 m_rollStream = Observable
-                    .Interval(TimeSpan.FromSeconds(1))
+                    .Interval(TimeSpan.FromSeconds(m_params.RollInterval))
                     .Subscribe(_ => {
                         if (Roll().IsWants) { StopRolling(); }
                     })
                     .AddTo(this);
+            }
+            else {
+                StopRolling();
             }
         }
         #endregion

@@ -22,19 +22,12 @@ namespace Main {
             #endregion
 
             #region ctor
-            public OddsPreferences(Dictionary<Rarity, Prob> odds)
+            public OddsPreferences(IReadOnlyDictionary<Rarity, Prob> odds)
             : this(odds, Prob.One) {}
-            public OddsPreferences(Dictionary<Rarity, Prob> odds, Prob oddsInRarity) {
+            public OddsPreferences(IReadOnlyDictionary<Rarity, Prob> odds, Prob oddsInRarity) {
                 Odds = new Odds(odds);
                 OddsInRarity = oddsInRarity;
             }
-            // public UserPreferences(Rarity max, Dictionary<Rarity, Prob> odds)
-            // : this(max, odds, Prob.One) {}
-            // public UserPreferences(Rarity max, Dictionary<Rarity, Prob> odds, Prob oddsInRarity) {
-            //     //Max = max;
-            //     Odds = new Odds(odds);
-            //     OddsInRarity = oddsInRarity;
-            // }
             #endregion
 
             #region override

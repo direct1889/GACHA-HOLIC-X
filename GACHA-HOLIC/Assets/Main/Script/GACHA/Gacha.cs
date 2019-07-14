@@ -7,6 +7,23 @@ namespace Main {
         public enum Rarity {
             None = 0, S1 = 1, S2, S3, S4, S5
         }
+        /// <summary> レアリティの関連メソッド群 </summary>
+        public static class ExRarity {
+            /// <summary> intから </summary>
+            public static Rarity ToRarity(this int i) {
+                if (0 <= i && i <= 5) { return (Rarity)i; }
+                else { return Rarity.None; }
+            }
+            public static Rarity ToRaritw(this string str) {
+                var parsed = System.Enum.Parse(typeof(Rarity), str);
+                if (parsed.GetType() == typeof(Rarity)) {
+                    return (Rarity)parsed;
+                }
+                else {
+                    return Rarity.None;
+                }
+            }
+        }
 
         /// <summary> ガチャから出てくるもの </summary>
         public struct Content {

@@ -19,7 +19,7 @@ namespace Main {
             #endregion
 
             #region mono
-            public Odds(Dictionary<Rarity, Prob> probs) {
+            public Odds(IReadOnlyDictionary<Rarity, Prob> probs) {
                 if (probs.Sum(p => p.Value.Accurate) != Prob.SignificantFiguresMax) {
                     // 確率の合計が1でないならエラー
                     Debug.LogError("Sum of probability != 1.0");
