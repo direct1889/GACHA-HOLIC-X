@@ -40,7 +40,7 @@ namespace Main.Gacha {
         #endregion
 
         #region mono
-        private void Awake() {
+        private void Start() {
             m_vendor = m_params.CreateVendor();
         }
         #endregion

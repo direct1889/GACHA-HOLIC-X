@@ -10,9 +10,11 @@ SE
 // 15 July 2019 ---------------
 UI[in] Odds編
 
-
+// 22 July 2019 ---------------
 UI[in]
 	Odds.Sum == 1 判定
+
+UI[in]
 	Oddsテンプレート
 	Vendor再生成タイミング
 

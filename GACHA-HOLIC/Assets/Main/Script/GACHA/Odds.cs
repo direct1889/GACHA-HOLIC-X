@@ -20,9 +20,10 @@ namespace Main {
 
             #region mono
             public Odds(IReadOnlyDictionary<Rarity, Prob> probs) {
-                if (probs.Sum(p => p.Value.Accurate) != Prob.SignificantFiguresMax) {
-                    // 確率の合計が1でないならエラー
-                    Debug.LogError("Sum of probability != 1.0");
+                var sum = probs.Sum(p => p.Value.Accurate);
+                if (sum != Prob.SignificantFiguresMax) {
+                    // 確率の合計が1でないなら警告
+                    Debug.LogAssertion($"Sum == {sum} != 1.0");
                 }
                 Probs = probs;
             }

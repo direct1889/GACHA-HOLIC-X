@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace Main {
 
@@ -70,6 +72,17 @@ namespace Main {
                     return (a.ValueInt, b.ValueInt * (a.SignificantFigures / b.SignificantFigures));
                 }
             }
+            /// <summary> 確率系列の合計が1になっているか </summary>
+            public static bool TotalIsOne(IEnumerable<Prob> probs) {
+                return probs.Select(p => p.Accurate).Sum() == SignificantFiguresMax;
+            }
+            public static bool TotalIsOne(int accurateTotal) {
+                return accurateTotal == SignificantFiguresMax;
+            }
+            public static int AccurateTotal(IEnumerable<Prob> probs) {
+                return probs.Select(p => p.Accurate).Sum();
+            }
+
             /// <summary> 桁数(精度)の上限 </summary>
             private static readonly int numberOfSignificantFiguresMax = 5;
             /// <summary> 桁数(精度)の上限 </summary>
@@ -120,6 +133,9 @@ namespace Main {
 
             #region static
             public static Prob FromString(string str) {
+                if (str is null || str.Length == 0) {
+                    str = "0";
+                }
                 return new Prob(System.Convert.ToUInt32(str), numberOfSignificantFiguresMax);
             }
             #endregion
