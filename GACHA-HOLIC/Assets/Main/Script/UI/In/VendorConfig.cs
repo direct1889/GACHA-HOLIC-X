@@ -29,13 +29,6 @@ namespace Main.Gacha.UI {
 
         /// <summary> プリセット設定ボタン群 </summary>
         public OddsPrefPresetManager presets;
-
-        /// <summary> 石単価 </summary>
-        public FloatInputField ishiPrice;
-        /// <summary> 何連を単位として引くか </summary>
-        public IntInputField consecutiveNum;
-        /// <summary> 上記の単位連1セットに必要な石の個数 </summary>
-        public IntInputField numOfIshiConsecutive;
         #endregion
 
         #region getter
@@ -75,13 +68,6 @@ namespace Main.Gacha.UI {
         UGUI.Button m_saveButton;
         IOddsPrefPresetManager m_presets;
 
-        /// <summary> 石単価 </summary>
-        FloatInputField m_ishiPrice;
-        /// <summary> 何連を単位として引くか </summary>
-        IntInputField m_consecutiveNum;
-        /// <summary> 上記の単位連1セットに必要な石の個数 </summary>
-        IntInputField m_numOfIshiConsecutive;
-
         [SerializeField] VendorConfigSerializeFields m_serialized;
         #endregion
 
@@ -118,9 +104,6 @@ namespace Main.Gacha.UI {
                 m_total        = m_serialized.total;
                 m_saveButton   = m_serialized.saveButton;
                 m_presets      = m_serialized.presets;
-                m_ishiPrice    = m_serialized.ishiPrice;
-                m_consecutiveNum = m_serialized.consecutiveNum;
-                m_numOfIshiConsecutive = m_serialized.numOfIshiConsecutive;
 
                 m_presets
                     .OnClicked
