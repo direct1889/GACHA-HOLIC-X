@@ -29,14 +29,15 @@ namespace Main {
             #region public
             public IResult Roll() {
                 Rarity midResult = Pref.Odds.Roulette();
-                if (midResult == Target) {
-                    // レアリティが狙い通りだった場合、レアリティ内での抽選を行う
-                    return new Result(new Content(midResult), Pref.RateInRarity.Roulette());
-                }
-                else {
-                    // レアリティが違うため目当ての結果ではない
-                    return new Result(new Content(midResult), false);
-                }
+                var isWants = new System.Func<IsWants>(() => {
+                    if (midResult == Target) {
+                        // レアリティが狙い通りだった場合、レアリティ内での抽選を行う
+                        if (Pref.RateInRarity.Roulette()) { return IsWants.Win; }
+                        else { return IsWants.Slip; }
+                    }
+                    else { return IsWants.Lose; }
+                })();
+                return new Result(new Content(midResult), isWants);
             }
             #endregion
 

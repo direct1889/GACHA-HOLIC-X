@@ -125,7 +125,7 @@ namespace Main.Gacha.UI {
 
         #region public
         public IVendingMachineImpl CreateVendor() {
-            Debug.LogError($"CreateVendor : {Odds}, {RateInRarity}");
+            du.Test.LLog.Debug.Log($"CreateVendor : {Odds}, {RateInRarity}");
             return new VendingMachineImpl(TargetRarity, new OddsPreferences(Odds, RateInRarity));
         }
         #endregion

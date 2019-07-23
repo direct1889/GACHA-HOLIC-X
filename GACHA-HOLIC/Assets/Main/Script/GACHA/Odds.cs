@@ -43,7 +43,7 @@ namespace Main.Gacha {
         public OddsInt6(IReadOnlyDictionary<Rarity, ProbInt6> probs) {
             // 確率の合計が1でないなら警告
             var sum = ProbInt6.Sum(probs.Values);
-            if (!sum.Is1) { Debug.LogAssertion($"Sum == {sum} != 1.0"); }
+            if (!sum.Is1) { du.Test.LLog.Debug.LogR($"Sum == {sum} != 1.0"); }
 
             Probs = probs;
         }

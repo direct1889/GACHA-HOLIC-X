@@ -64,7 +64,7 @@ namespace Main {
             /// <summary> 確率値に基づき当落を乱択 </summary>
             public bool Roulette() {
                 var value = Random.Range(1, AccurateMax);
-                du.Test.LLog.Debug.LogError($"{value} in {Accurate} ({value <= Accurate}))");
+                du.Test.LLog.Debug.LogR($"{value} in {Accurate} ({value <= Accurate}))");
                 return value <= Accurate;
             }
             #endregion
