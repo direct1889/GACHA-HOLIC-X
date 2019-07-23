@@ -15,18 +15,18 @@ UI[in]
 	Odds.Sum == 1 判定
 	確率複数実装に向けた汎化
 	Vendor再生成タイミング
-
-UI[in]
 	Oddsテンプレート
+
 
 UI[in]
 	石金額設定
+	かかった金額
+	Oddsテンプレートを石設定に拡張
 
-かかった金額
+decimalProb
+n分の一確率
 
 Web連携
-
-n分の一確率
 
 ガチャ
 	回し演出

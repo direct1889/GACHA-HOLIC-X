@@ -8,21 +8,34 @@ using UniRx;
 namespace Main.Gacha.UI {
 
     [System.Serializable]
-    public struct ParamConfigSerializeFields {
+    /// <summary> VendorConfigからSerializeFieldを分離 </summary>
+    public struct VendorConfigSerializeFields {
         #region field
+        /// <summary> 各レアリティの排出確率 </summary>
         [SerializeField] ProbI6InputField m_ifS5;
         [SerializeField] ProbI6InputField m_ifS4;
         [SerializeField] ProbI6InputField m_ifS3;
         [SerializeField] ProbI6InputField m_ifS2;
         [SerializeField] ProbI6InputField m_ifS1;
-
+        /// <summary> 狙っているレアリティ内での狙っているコンテンツの確率 </summary>
         public ProbI6InputField rateInRarity;
-
-        public FloatInputField rollInterval;
+        /// <summary> 各レアリティ排出率の合計 </summary>
         public du.dui.TMPArea total;
+
+        /// <summary> ガチャを連続で回すときの間隔[s] </summary>
+        public FloatInputField rollInterval;
+        /// <summary> OddsをVendingMachineに適用するボタン </summary>
         public UGUI.Button saveButton;
 
+        /// <summary> プリセット設定ボタン群 </summary>
         public OddsPrefPresetManager presets;
+
+        /// <summary> 石単価 </summary>
+        public FloatInputField ishiPrice;
+        /// <summary> 何連を単位として引くか </summary>
+        public IntInputField consecutiveNum;
+        /// <summary> 上記の単位連1セットに必要な石の個数 </summary>
+        public IntInputField numOfIshiConsecutive;
         #endregion
 
         #region getter
@@ -38,7 +51,7 @@ namespace Main.Gacha.UI {
     }
 
     /// <summary> 各種パラメータをユーザ入力から受け取るGUI </summary>
-    public interface IParamConfig {
+    public interface IVendorConfig {
         /// <value> 各レアリティの排出率表 </value>
         IOdds Odds { get; }
         /// <value> 狙っているレアリティ </value>
@@ -53,7 +66,7 @@ namespace Main.Gacha.UI {
         IVendingMachineImpl CreateVendor();
     }
 
-    public class ParamConfig : MonoBehaviour, IParamConfig {
+    public class VendorConfig : MonoBehaviour, IVendorConfig {
         #region field
         IDictionary<Rarity, IProbI6InputField> m_inputFields;
         ProbI6InputField m_rateInRarity;
@@ -62,7 +75,14 @@ namespace Main.Gacha.UI {
         UGUI.Button m_saveButton;
         IOddsPrefPresetManager m_presets;
 
-        [SerializeField] ParamConfigSerializeFields m_serialized;
+        /// <summary> 石単価 </summary>
+        FloatInputField m_ishiPrice;
+        /// <summary> 何連を単位として引くか </summary>
+        IntInputField m_consecutiveNum;
+        /// <summary> 上記の単位連1セットに必要な石の個数 </summary>
+        IntInputField m_numOfIshiConsecutive;
+
+        [SerializeField] VendorConfigSerializeFields m_serialized;
         #endregion
 
         #region getter
@@ -98,6 +118,9 @@ namespace Main.Gacha.UI {
                 m_total        = m_serialized.total;
                 m_saveButton   = m_serialized.saveButton;
                 m_presets      = m_serialized.presets;
+                m_ishiPrice    = m_serialized.ishiPrice;
+                m_consecutiveNum = m_serialized.consecutiveNum;
+                m_numOfIshiConsecutive = m_serialized.numOfIshiConsecutive;
 
                 m_presets
                     .OnClicked

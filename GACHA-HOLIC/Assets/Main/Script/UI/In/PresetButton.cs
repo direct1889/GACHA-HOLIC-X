@@ -7,7 +7,7 @@ namespace Main.Gacha.UI {
 
     /// <summary>
     /// プリセットの適用ボタン
-    /// - ParamConfigに対して適用する
+    /// - VendorConfigに対して適用する
     /// </summary>
     public interface IPresetButton {
         /// <value> クリックされたらプリセット名を発行 </value>
@@ -16,7 +16,7 @@ namespace Main.Gacha.UI {
 
     /// <summary>
     /// プリセットの適用ボタン
-    /// - ParamConfigに対して適用する
+    /// - VendorConfigに対して適用する
     /// </summary>
     public class PresetButton : MonoBehaviour, IPresetButton {
         #region field

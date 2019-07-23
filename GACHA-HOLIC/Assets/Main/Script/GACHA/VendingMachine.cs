@@ -30,7 +30,7 @@ namespace Main.Gacha {
         public int RollCount { get; private set; } = 0;
 
         /// <summary> 各種設定項目 </summary>
-        [SerializeField] UI.ParamConfig m_params;
+        [SerializeField] UI.VendorConfig m_params;
         #endregion
 
         #region getter
@@ -65,7 +65,6 @@ namespace Main.Gacha {
             }
         }
         public void CheckUpVendor() {
-            Debug.LogError("CHeckUP!");
             m_vendor = m_params.CreateVendor();
         }
         #endregion
