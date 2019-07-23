@@ -3,7 +3,6 @@ using UnityEngine;
 using System.Linq;
 using UGUI = UnityEngine.UI;
 using UniRx;
-using static Main.Gacha.ProbInt6;
 
 
 namespace Main.Gacha.UI {
@@ -22,6 +21,8 @@ namespace Main.Gacha.UI {
         public FloatInputField rollInterval;
         public du.dui.TMPArea total;
         public UGUI.Button saveButton;
+
+        public OddsPrefPresetManager presets;
         #endregion
 
         #region getter
@@ -48,8 +49,7 @@ namespace Main.Gacha.UI {
         /// <value> 自動連続ガチャの間隔 </value>
         float RollInterval { get; }
 
-        /// <summary> 自動連続ガチャの間隔 </value>
-        IOddsPreferences CreateOddsPref();
+        /// <summary> VendingMachineごと再生成 </value>
         IVendingMachineImpl CreateVendor();
     }
 
@@ -58,14 +58,11 @@ namespace Main.Gacha.UI {
         IDictionary<Rarity, IProbI6InputField> m_inputFields;
         ProbI6InputField m_rateInRarity;
         FloatInputField m_rollInterval;
-        du.dui.TMPArea m_total;
+        du.dui.ITextArea m_total;
         UGUI.Button m_saveButton;
+        IOddsPrefPresetManager m_presets;
 
         [SerializeField] ParamConfigSerializeFields m_serialized;
-        #endregion
-
-        #region property
-        du.dui.ITextArea Total => m_total;
         #endregion
 
         #region getter
@@ -85,27 +82,27 @@ namespace Main.Gacha.UI {
                 return Rarity.None;
             }
         }
-        public IProb RateInRarity => m_rateInRarity.Prob;
+        public IProb RateInRarity {
+            get => m_rateInRarity.Prob;
+            private set => m_rateInRarity.SetProb(value);
+        }
         public float RollInterval => m_rollInterval.Value;
         #endregion
 
         #region mono
         private void Awake() {
             if (m_inputFields is null) {
-                m_inputFields = m_serialized.InputFields;
-                /*
-                Odds = new OddsInt6(new Dictionary<Rarity, ProbInt6>{
-                    { Rarity.S1, m_inputFields[Rarity.S1].Prob },
-                    { Rarity.S2, m_inputFields[Rarity.S2].Prob },
-                    { Rarity.S3, m_inputFields[Rarity.S3].Prob },
-                    { Rarity.S4, m_inputFields[Rarity.S4].Prob },
-                    { Rarity.S5, m_inputFields[Rarity.S5].Prob },
-                });
-                */
+                m_inputFields  = m_serialized.InputFields;
                 m_rateInRarity = m_serialized.rateInRarity;
                 m_rollInterval = m_serialized.rollInterval;
                 m_total        = m_serialized.total;
                 m_saveButton   = m_serialized.saveButton;
+                m_presets      = m_serialized.presets;
+
+                m_presets
+                    .OnClicked
+                    .Subscribe(odds => Set(odds))
+                    .AddTo(this);
 
                 // 初期値設定
                 Set(OddsAsset.At("MercStoria"));
@@ -121,20 +118,17 @@ namespace Main.Gacha.UI {
         #endregion
 
         #region public
-        public void Set(IOddsPreferences pref) {
-            SetOdds(pref.Odds);
-            m_rateInRarity.SetProb(pref.RateInRarity);
-        }
-        public IOddsPreferences CreateOddsPref() {
-            return new OddsPreferences(Odds, RateInRarity);
-        }
         public IVendingMachineImpl CreateVendor() {
             Debug.LogError($"CreateVendor : {Odds}, {RateInRarity}");
-            return new VendingMachineImpl(TargetRarity, CreateOddsPref());
+            return new VendingMachineImpl(TargetRarity, new OddsPreferences(Odds, RateInRarity));
         }
         #endregion
 
         #region private
+        private void Set(IOddsPreferences pref) {
+            SetOdds(pref.Odds);
+            RateInRarity = pref.RateInRarity;
+        }
         private void SetOdds(int s1, int s2, int s3, int s4, int s5) {
             m_inputFields[Rarity.S1].SetProb(new ProbInt6(s1));
             m_inputFields[Rarity.S2].SetProb(new ProbInt6(s2));
@@ -150,8 +144,8 @@ namespace Main.Gacha.UI {
         /// <summary> Oddsの合計が1になっているか </summary>
         private void CheckUpTotalOne() {
             IProb total = ProbInt6.Sum(m_inputFields.Values.Select(pif => pif.Prob));
-            if (total.Is1) { Total.Text = $"○ Total : {total}"; }
-            else           { Total.Text = $"× Total : {total}"; }
+            if (total.Is1) { m_total.Text = $"○ Total : {total}"; }
+            else           { m_total.Text = $"× Total : {total}"; }
             m_saveButton.interactable = total.Is1;
         }
         #endregion

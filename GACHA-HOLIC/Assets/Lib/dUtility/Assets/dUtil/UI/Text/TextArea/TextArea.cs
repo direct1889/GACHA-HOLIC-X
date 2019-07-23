@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UGUI = UnityEngine.UI;
 
 namespace du.dui {
 
@@ -10,15 +9,8 @@ namespace du.dui {
     }
 
     public abstract class TextArea : MonoBehaviour, ITextArea {
-        #region field
-        ITextGUI m_textUI;
-        #endregion
-
         #region property
-        protected ITextGUI TextUI {
-            private get => m_textUI;
-            set => m_textUI = m_textUI ?? value;
-        }
+        protected abstract ITextGUI TextUI { get; }
         public string Text {
             set => TextUI.Text = value;
             get => TextUI.Text;
@@ -28,14 +20,6 @@ namespace du.dui {
         #region public
         public void Add(string text){ TextUI.Text += text; }
         public void Add(char c)     { TextUI.Text += c;    }
-        #endregion
-    }
-
-    public class UGUITextArea : TextArea {
-        #region mono
-        private void Awake() {
-            TextUI = UGUITextWrapper4ITextGUI.Instantiate(transform.GetComponentInChildren<UGUI.Text>());
-        }
         #endregion
     }
 
