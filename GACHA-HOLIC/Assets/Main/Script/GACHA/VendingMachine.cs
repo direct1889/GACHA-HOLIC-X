@@ -41,7 +41,7 @@ namespace Main.Gacha {
 
         #region mono
         private void Start() {
-            m_vendor = m_params.CreateVendor();
+            CheckUpVendor();
         }
         #endregion
 
@@ -52,7 +52,7 @@ namespace Main.Gacha {
         public void RollEndless() {
             if (m_rollStream is null) {
                 // TODO: Timing
-                m_vendor = m_params.CreateVendor();
+                CheckUpVendor();
                 m_rollStream = Observable
                     .Interval(TimeSpan.FromSeconds(m_params.RollInterval))
                     .Subscribe(_ => {
@@ -63,6 +63,10 @@ namespace Main.Gacha {
             else {
                 StopRolling();
             }
+        }
+        public void CheckUpVendor() {
+            Debug.LogError("CHeckUP!");
+            m_vendor = m_params.CreateVendor();
         }
         #endregion
 

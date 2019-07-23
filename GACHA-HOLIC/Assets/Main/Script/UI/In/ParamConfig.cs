@@ -3,18 +3,47 @@ using UnityEngine;
 using System.Linq;
 using UGUI = UnityEngine.UI;
 using UniRx;
+using static Main.Gacha.ProbInt6;
 
 
 namespace Main.Gacha.UI {
 
+    [System.Serializable]
+    public struct ParamConfigSerializeFields {
+        #region field
+        [SerializeField] ProbI6InputField m_ifS5;
+        [SerializeField] ProbI6InputField m_ifS4;
+        [SerializeField] ProbI6InputField m_ifS3;
+        [SerializeField] ProbI6InputField m_ifS2;
+        [SerializeField] ProbI6InputField m_ifS1;
+
+        public ProbI6InputField rateInRarity;
+
+        public FloatInputField rollInterval;
+        public du.dui.TMPArea total;
+        public UGUI.Button saveButton;
+        #endregion
+
+        #region getter
+        public IDictionary<Rarity, IProbI6InputField> InputFields
+            => new Dictionary<Rarity, IProbI6InputField>{
+            { Rarity.S1, m_ifS1 },
+            { Rarity.S2, m_ifS2 },
+            { Rarity.S3, m_ifS3 },
+            { Rarity.S4, m_ifS4 },
+            { Rarity.S5, m_ifS5 },
+        };
+        #endregion
+    }
+
     /// <summary> 各種パラメータをユーザ入力から受け取るGUI </summary>
     public interface IParamConfig {
         /// <value> 各レアリティの排出率表 </value>
-        IReadOnlyDictionary<Rarity, Prob> Odds { get; }
+        IOdds Odds { get; }
         /// <value> 狙っているレアリティ </value>
         Rarity TargetRarity { get; }
         /// <value> 狙っているレアリティ内での狙っているものの排出確率 </value>
-        Prob RateInRarity { get; }
+        IProb RateInRarity { get; }
 
         /// <value> 自動連続ガチャの間隔 </value>
         float RollInterval { get; }
@@ -26,18 +55,13 @@ namespace Main.Gacha.UI {
 
     public class ParamConfig : MonoBehaviour, IParamConfig {
         #region field
-        Dictionary<Rarity, IProbInputField> m_odds;
+        IDictionary<Rarity, IProbI6InputField> m_inputFields;
+        ProbI6InputField m_rateInRarity;
+        FloatInputField m_rollInterval;
+        du.dui.TMPArea m_total;
+        UGUI.Button m_saveButton;
 
-        [SerializeField] ProbInputField m_odds5;
-        [SerializeField] ProbInputField m_odds4;
-        [SerializeField] ProbInputField m_odds3;
-        [SerializeField] ProbInputField m_odds2;
-        [SerializeField] ProbInputField m_odds1;
-        [SerializeField] ProbInputField m_rateInRarity;
-
-        [SerializeField] FloatInputField m_rollInterval;
-        [SerializeField] du.dui.TMPArea m_total;
-        [SerializeField] UGUI.Button m_saveButton;
+        [SerializeField] ParamConfigSerializeFields m_serialized;
         #endregion
 
         #region property
@@ -45,43 +69,49 @@ namespace Main.Gacha.UI {
         #endregion
 
         #region getter
-        public IReadOnlyDictionary<Rarity, Prob> Odds { get; private set; }
+        // public IOdds Odds { get; private set; }
+        public IOdds Odds => new OddsInt6(new Dictionary<Rarity, ProbInt6>{
+                    { Rarity.S1, m_inputFields[Rarity.S1].Prob },
+                    { Rarity.S2, m_inputFields[Rarity.S2].Prob },
+                    { Rarity.S3, m_inputFields[Rarity.S3].Prob },
+                    { Rarity.S4, m_inputFields[Rarity.S4].Prob },
+                    { Rarity.S5, m_inputFields[Rarity.S5].Prob },
+                });
         public Rarity TargetRarity {
             get {
-                foreach (var i in m_odds) {
+                foreach (var i in m_inputFields) {
                     if (i.Value.IsTarget) { return i.Key; }
                 }
                 return Rarity.None;
             }
         }
-        public Prob RateInRarity => m_rateInRarity.Prob;
+        public IProb RateInRarity => m_rateInRarity.Prob;
         public float RollInterval => m_rollInterval.Value;
         #endregion
 
         #region mono
         private void Awake() {
-            if (m_odds is null) {
-                m_odds = new Dictionary<Rarity, IProbInputField>{
-                    { Rarity.S1, m_odds1 },
-                    { Rarity.S2, m_odds2 },
-                    { Rarity.S3, m_odds3 },
-                    { Rarity.S4, m_odds4 },
-                    { Rarity.S5, m_odds5 },
-                };
-                Odds = new Dictionary<Rarity, Prob>{
-                    { Rarity.S1, m_odds1.Prob },
-                    { Rarity.S2, m_odds2.Prob },
-                    { Rarity.S3, m_odds3.Prob },
-                    { Rarity.S4, m_odds4.Prob },
-                    { Rarity.S5, m_odds5.Prob },
-                };
+            if (m_inputFields is null) {
+                m_inputFields = m_serialized.InputFields;
+                /*
+                Odds = new OddsInt6(new Dictionary<Rarity, ProbInt6>{
+                    { Rarity.S1, m_inputFields[Rarity.S1].Prob },
+                    { Rarity.S2, m_inputFields[Rarity.S2].Prob },
+                    { Rarity.S3, m_inputFields[Rarity.S3].Prob },
+                    { Rarity.S4, m_inputFields[Rarity.S4].Prob },
+                    { Rarity.S5, m_inputFields[Rarity.S5].Prob },
+                });
+                */
+                m_rateInRarity = m_serialized.rateInRarity;
+                m_rollInterval = m_serialized.rollInterval;
+                m_total        = m_serialized.total;
+                m_saveButton   = m_serialized.saveButton;
 
-                // TODO: 初期値設定(後ほど消します)
-                SetOdds(0, 23890, 67530, 5580, 3000);
-                m_rateInRarity.SetProb(33333);
+                // 初期値設定
+                Set(OddsAsset.At("MercStoria"));
                 CheckUpTotalOne();
 
-                foreach (var i in m_odds.Values) {
+                foreach (var i in m_inputFields.Values) {
                     i.OnProbChanged
                         .Subscribe(_ => CheckUpTotalOne())
                         .AddTo(this);
@@ -91,27 +121,38 @@ namespace Main.Gacha.UI {
         #endregion
 
         #region public
+        public void Set(IOddsPreferences pref) {
+            SetOdds(pref.Odds);
+            m_rateInRarity.SetProb(pref.RateInRarity);
+        }
         public IOddsPreferences CreateOddsPref() {
             return new OddsPreferences(Odds, RateInRarity);
         }
         public IVendingMachineImpl CreateVendor() {
+            Debug.LogError($"CreateVendor : {Odds}, {RateInRarity}");
             return new VendingMachineImpl(TargetRarity, CreateOddsPref());
         }
         #endregion
 
         #region private
         private void SetOdds(int s1, int s2, int s3, int s4, int s5) {
-            m_odds[Rarity.S1].SetProb(s1);
-            m_odds[Rarity.S2].SetProb(s2);
-            m_odds[Rarity.S3].SetProb(s3);
-            m_odds[Rarity.S4].SetProb(s4);
-            m_odds[Rarity.S5].SetProb(s5);
+            m_inputFields[Rarity.S1].SetProb(new ProbInt6(s1));
+            m_inputFields[Rarity.S2].SetProb(new ProbInt6(s2));
+            m_inputFields[Rarity.S3].SetProb(new ProbInt6(s3));
+            m_inputFields[Rarity.S4].SetProb(new ProbInt6(s4));
+            m_inputFields[Rarity.S5].SetProb(new ProbInt6(s5));
+        }
+        private void SetOdds(IOdds odds) {
+            foreach (Rarity r in ExRarity.Valids) {
+                m_inputFields[r].SetProb(odds[r]);
+            }
         }
         /// <summary> Oddsの合計が1になっているか </summary>
         private void CheckUpTotalOne() {
-            var total = Prob.AccurateTotal(m_odds.Values.Select(pif => pif.Prob));
-            Total.Text = $"Total : {total}";
-            m_saveButton.enabled = Prob.TotalIsOne(total);
+            IProb total = ProbInt6.Sum(m_inputFields.Values.Select(pif => pif.Prob));
+            if (total.Is1) { Total.Text = $"○ Total : {total}"; }
+            else           { Total.Text = $"× Total : {total}"; }
+            m_saveButton.interactable = total.Is1;
         }
         #endregion
     }

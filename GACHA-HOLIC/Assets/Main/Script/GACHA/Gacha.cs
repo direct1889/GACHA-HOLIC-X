@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 
 namespace Main {
 
@@ -14,7 +15,7 @@ namespace Main {
                 if (0 <= i && i <= 5) { return (Rarity)i; }
                 else { return Rarity.None; }
             }
-            public static Rarity ToRaritw(this string str) {
+            public static Rarity ToRarity(this string str) {
                 var parsed = System.Enum.Parse(typeof(Rarity), str);
                 if (parsed.GetType() == typeof(Rarity)) {
                     return (Rarity)parsed;
@@ -23,6 +24,9 @@ namespace Main {
                     return Rarity.None;
                 }
             }
+            /// <summary> S1-S5列挙 </summary>
+            public static IEnumerable<Rarity> Valids
+                => new List<Rarity>{ Rarity.S1, Rarity.S2, Rarity.S3, Rarity.S4, Rarity.S5 };
         }
 
         /// <summary> ガチャから出てくるもの </summary>
