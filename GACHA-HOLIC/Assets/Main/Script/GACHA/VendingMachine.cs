@@ -56,7 +56,7 @@ namespace Main.Gacha {
                 m_rollStream = Observable
                     .Interval(TimeSpan.FromSeconds(m_params.RollInterval))
                     .Subscribe(_ => {
-                        if (Roll().IsWants == IsWants.Win) { StopRolling(); }
+                        if (Roll().IsWants == IsWants.Win) { WonRolling(); }
                     })
                     .AddTo(this);
             }
@@ -82,6 +82,10 @@ namespace Main.Gacha {
         private void StopRolling() {
             m_rollStream.Dispose();
             m_rollStream = null;
+        }
+        /// <summary> ガチャで勝利した </summary>
+        private void WonRolling() {
+            StopRolling();
             RollCount = 0;
         }
         #endregion

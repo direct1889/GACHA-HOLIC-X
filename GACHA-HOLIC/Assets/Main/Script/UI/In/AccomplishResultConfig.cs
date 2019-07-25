@@ -4,7 +4,7 @@ namespace Main.Gacha.UI {
 
     /// <summary> AlertConfigからSerializeFieldを分離 </summary>
     /// <summary> 各種パラメータをユーザ入力から受け取るGUI </summary>
-    public interface IAlertConfig {
+    public interface IAccomplishResultConfig {
         #region field
         /// <summary> 石単価 </summary>
         float IshiPrice { get; }
@@ -18,7 +18,7 @@ namespace Main.Gacha.UI {
         #endregion
     }
 
-    public class AlertConfig : MonoBehaviour, IAlertConfig {
+    public class AccomplishResultConfig : MonoBehaviour, IAccomplishResultConfig {
         #region field
         /// <summary> 石単価 </summary>
         [SerializeField] FloatInputField m_ishiPrice;
@@ -37,7 +37,7 @@ namespace Main.Gacha.UI {
         public int NumOfIshi4Consecutive => m_numOfIshiConsecutive.Value;
 
         /// <summary> n回回すのにかかる石 </summary>
-        public float NumOfIshiNth(int n) { return NumOfIshi4Consecutive * n / ConsecutiveNum; }
+        public float NumOfIshiNth(int n) { return NumOfIshi4Consecutive * n / (float)ConsecutiveNum; }
         #endregion
 
         #region mono
