@@ -87,11 +87,11 @@ namespace du.Test {
 
         public static bool IsNull(object obj, string name) {
             if (obj == null) {
-                Debug.Log(name + " is null!!");
+                du.Test.LLog.Debug.LogR(name + " is null!!");
                 return true;
             }
             else {
-                Debug.Log(name + " is not null.");
+                du.Test.LLog.Debug.Log(name + " is not null.");
                 return false;
             }
         }

@@ -5,17 +5,17 @@ using System;
 
 namespace Main.Gacha.UI {
 
-    public interface IOddsPrefPresetManager {
-        /// <value> クリックされたらプリセット名を発行 </value>
-        IObservable<IOddsPreferences> OnClicked { get; }
+    public interface IGachaConfPresetManager {
+        /// <value> クリックされたらプリセットを発行 </value>
+        IObservable<IGachaConfigPreset> OnClicked { get; }
     }
 
     /// <summary>
     /// プリセットの適用ボタン群の取りまとめ
     /// </summary>
-    public class OddsPrefPresetManager : MonoBehaviour, IOddsPrefPresetManager {
+    public class GachaConfPresetManager : MonoBehaviour, IGachaConfPresetManager {
         #region field
-        Subject<IOddsPreferences> m_presetStream = new Subject<IOddsPreferences>();
+        Subject<IGachaConfigPreset> m_presetStream = new Subject<IGachaConfigPreset>();
 
         [SerializeField] List<PresetButton> m_buttons;
         #endregion
@@ -32,7 +32,7 @@ namespace Main.Gacha.UI {
 
         #region getter
         /// <value> クリックされたらプリセット名を発行 </value>
-        public IObservable<IOddsPreferences> OnClicked => m_presetStream;
+        public IObservable<IGachaConfigPreset> OnClicked => m_presetStream;
         #endregion
     }
 

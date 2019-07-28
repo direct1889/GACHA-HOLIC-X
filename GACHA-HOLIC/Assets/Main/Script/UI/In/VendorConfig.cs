@@ -28,7 +28,7 @@ namespace Main.Gacha.UI {
         public UGUI.Button saveButton;
 
         /// <summary> プリセット設定ボタン群 </summary>
-        public OddsPrefPresetManager presets;
+        public GachaConfPresetManager presets;
         #endregion
 
         #region getter
@@ -66,7 +66,7 @@ namespace Main.Gacha.UI {
         FloatInputField m_rollInterval;
         du.dui.ITextArea m_total;
         UGUI.Button m_saveButton;
-        IOddsPrefPresetManager m_presets;
+        IGachaConfPresetManager m_presets;
 
         [SerializeField] VendorConfigSerializeFields m_serialized;
         #endregion
@@ -86,6 +86,13 @@ namespace Main.Gacha.UI {
                     if (i.Value.IsTarget) { return i.Key; }
                 }
                 return Rarity.None;
+            }
+            private set {
+                var current = TargetRarity;
+                if (current != value) {
+                    m_inputFields[current].SetIsTarget(false);
+                    m_inputFields[value].SetIsTarget(true);
+                }
             }
         }
         public IProb RateInRarity {
@@ -107,7 +114,7 @@ namespace Main.Gacha.UI {
 
                 m_presets
                     .OnClicked
-                    .Subscribe(odds => Set(odds))
+                    .Subscribe(conf => Set(conf))
                     .AddTo(this);
 
                 // 初期値設定
@@ -131,21 +138,18 @@ namespace Main.Gacha.UI {
         #endregion
 
         #region private
-        private void Set(IOddsPreferences pref) {
-            SetOdds(pref.Odds);
-            RateInRarity = pref.RateInRarity;
-        }
-        private void SetOdds(int s1, int s2, int s3, int s4, int s5) {
-            m_inputFields[Rarity.S1].SetProb(new ProbInt6(s1));
-            m_inputFields[Rarity.S2].SetProb(new ProbInt6(s2));
-            m_inputFields[Rarity.S3].SetProb(new ProbInt6(s3));
-            m_inputFields[Rarity.S4].SetProb(new ProbInt6(s4));
-            m_inputFields[Rarity.S5].SetProb(new ProbInt6(s5));
-        }
-        private void SetOdds(IOdds odds) {
+        private void Set(IVendorConfig conf) {
+            du.Test.Log.IsNull(conf, nameof(conf));
+            du.Test.Log.IsNull(conf.Odds, nameof(conf.Odds));
+            du.Test.Log.IsNull(m_inputFields, nameof(m_inputFields));
             foreach (Rarity r in ExRarity.Valids) {
-                m_inputFields[r].SetProb(odds[r]);
+                du.Test.Log.IsNull(m_inputFields[r], r.ToString());
+                du.Test.Log.IsNull(conf.Odds[r], r.ToString());
+                m_inputFields[r].SetProb(conf.Odds[r]);
             }
+            RateInRarity = conf.RateInRarity;
+            m_rollInterval.Value = conf.RollInterval;
+            TargetRarity = conf.TargetRarity;
         }
         /// <summary> Oddsの合計が1になっているか </summary>
         private void CheckUpTotalOne() {

@@ -21,9 +21,9 @@ namespace Main {
             #endregion
 
             #region ctor
-            public OddsPreferences(IOdds odds, IProb oddsInRarity) {
+            public OddsPreferences(IOdds odds, IProb rateInRarity) {
                 Odds = odds;
-                RateInRarity = oddsInRarity;
+                RateInRarity = rateInRarity;
             }
             #endregion
 

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UniRx;
 
 namespace Main.Gacha.UI {
 
@@ -12,7 +13,9 @@ namespace Main.Gacha.UI {
         int ConsecutiveNum { get; }
         /// <summary> 上記の単位連1セットに必要な石の個数 </summary>
         int NumOfIshi4Consecutive { get; }
+        #endregion
 
+        #region getter
         /// <summary> n回回すのにかかる石 </summary>
         float NumOfIshiNth(int n);
         #endregion
@@ -26,6 +29,9 @@ namespace Main.Gacha.UI {
         [SerializeField] IntInputField m_consecutiveNum;
         /// <summary> 上記の単位連1セットに必要な石の個数 </summary>
         [SerializeField] IntInputField m_numOfIshiConsecutive;
+
+        /// <summary> プリセット設定ボタン群 </summary>
+        [SerializeField] UI.GachaConfPresetManager m_presets;
         #endregion
 
         #region getter
@@ -37,17 +43,24 @@ namespace Main.Gacha.UI {
         public int NumOfIshi4Consecutive => m_numOfIshiConsecutive.Value;
 
         /// <summary> n回回すのにかかる石 </summary>
-        public float NumOfIshiNth(int n) { return NumOfIshi4Consecutive * n / (float)ConsecutiveNum; }
+        public float NumOfIshiNth(int n) => NumOfIshi4Consecutive * n / (float)ConsecutiveNum;
         #endregion
 
         #region mono
-        private void Awake() { }
-        #endregion
-
-        #region public
+        private void Awake() {
+            m_presets
+                .OnClicked
+                .Subscribe(conf => Set(conf))
+                .AddTo(this);
+        }
         #endregion
 
         #region private
+        private void Set(IAccomplishResultConfig conf) {
+            m_ishiPrice           .Value = conf.IshiPrice;
+            m_consecutiveNum      .Value = conf.ConsecutiveNum;
+            m_numOfIshiConsecutive.Value = conf.NumOfIshi4Consecutive;
+        }
         #endregion
     }
 

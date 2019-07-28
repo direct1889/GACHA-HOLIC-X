@@ -1336,7 +1336,7 @@ MonoBehaviour:
   m_material: {fileID: 0}
   m_sharedMaterial: {fileID: 0}
   m_isDefaultMaterial: 0
-  m_padding: 1.25
+  m_padding: 0
   m_canvasRenderer: {fileID: 243964994}
   m_TextComponent: {fileID: 72723561}
   m_materialReferenceIndex: 1
@@ -4232,7 +4232,7 @@ PrefabInstance:
     - target: {fileID: 692073660827092216, guid: d573afeaf57fc4a5db8db9c260029cc8,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 350
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 8480306239425291474, guid: d573afeaf57fc4a5db8db9c260029cc8,
         type: 3}
@@ -4272,22 +4272,22 @@ PrefabInstance:
     - target: {fileID: 8480306239425291474, guid: d573afeaf57fc4a5db8db9c260029cc8,
         type: 3}
       propertyPath: m_fontSize
-      value: 80
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 8480306239425291474, guid: d573afeaf57fc4a5db8db9c260029cc8,
         type: 3}
       propertyPath: m_fontSizeBase
-      value: 80
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 2265896404465478734, guid: d573afeaf57fc4a5db8db9c260029cc8,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 400
+      value: 350
       objectReference: {fileID: 0}
     - target: {fileID: 2265896404465478734, guid: d573afeaf57fc4a5db8db9c260029cc8,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 350
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 5044954354032598611, guid: d573afeaf57fc4a5db8db9c260029cc8,
         type: 3}
@@ -6950,7 +6950,7 @@ MonoBehaviour:
   m_material: {fileID: 0}
   m_sharedMaterial: {fileID: 0}
   m_isDefaultMaterial: 0
-  m_padding: 1.25
+  m_padding: 0
   m_canvasRenderer: {fileID: 1654372284}
   m_TextComponent: {fileID: 1041281979}
   m_materialReferenceIndex: 1
@@ -7601,6 +7601,7 @@ MonoBehaviour:
   m_ishiPrice: {fileID: 540228711}
   m_consecutiveNum: {fileID: 31941987416450074}
   m_numOfIshiConsecutive: {fileID: 398157029}
+  m_presets: {fileID: 5789055}
 --- !u!1 &1842433243
 GameObject:
   m_ObjectHideFlags: 0
