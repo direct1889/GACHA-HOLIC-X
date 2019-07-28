@@ -20,14 +20,13 @@ UI[in]
 UI[in]
 	Oddsテンプレート
 	石金額設定
+	かかった金額
 
 
 UI[in]
-	かかった金額
 	Oddsテンプレートを石設定に拡張
 
 decimalProb
-n分の一確率
 
 Web連携
 

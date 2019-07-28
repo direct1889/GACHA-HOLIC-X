@@ -27,9 +27,17 @@ namespace Main.Gacha {
         /// <summary> プリセットを登録/上書きする </summary>
         public static void Register(string key, int accS1, int accS2, int accS3, int accS4, int accS5, int accOIR) {
             if (HasExist(key)) {
-                Preset[key] = new OddsPreferences(accS1, accS2, accS3, accS4, accS5, accOIR);
+                Preset[key] = new OddsPreferences(
+                    new OddsInt6(accS1, accS2, accS3, accS4, accS5),
+                    new ProbInt6(accOIR)
+                    );
             }
-            Preset.Add(key, new OddsPreferences(accS1, accS2, accS3, accS4, accS5, accOIR));
+            else {
+                Preset.Add(key, new OddsPreferences(
+                    new OddsInt6(accS1, accS2, accS3, accS4, accS5),
+                    new ProbInt6(accOIR))
+                    );
+            }
         }
         #endregion
     }
