@@ -6,6 +6,59 @@ using System.Collections.Generic;
 
 namespace Main.Gacha {
 
+    /// <summary> ガチャの回し間隔管理 </summary>
+    public class RollIntervalMgr {
+        #region const
+        private static readonly float intervalLowerLimit = 0.03f;
+        /// <summary> 加速リスト </summary>
+        private static readonly float speedUpRate = 0.8f;
+        /// <summary> intervalを適用するタイミングリスト </summary>
+        private static IReadOnlyList<int> accelTimings = new List<int>{
+            10, 15, 20, 25, 30, 50, 70, 100
+        };
+        #endregion
+
+        #region field
+        /// <summary> 現在の回し間隔[s] </summary>
+        float m_interval = 1f;
+        private float Interval {
+            get => m_interval;
+            set => m_interval = Mathf.Max(value, intervalLowerLimit);
+        }
+        /// <summary> intervalを適用するタイミング </summary>
+        public int NextAccelTiming => accelTimings[m_accelTimingIt];
+        /// <summary> intervalを適用するタイミングイテレータ </summary>
+        int m_accelTimingIt = 0;
+        #endregion
+
+        #region getter
+        public TimeSpan IntervalSec => TimeSpan.FromSeconds(Interval);
+        #endregion
+
+        #region ctor
+        /// <param name="initialInterval">
+        /// 回し間隔[s]
+        /// - [VendingMachine.intervalLowerLimit, ∞)
+        /// </param>
+        public RollIntervalMgr(float initialInterval) {
+            Interval = initialInterval;
+        }
+        #endregion
+
+        #region public
+        /// <summary> 回してる途中でintervalを変更 </summary>
+        public bool CheckAndUpdate(int rollCount) {
+            if (rollCount == NextAccelTiming) {
+                du.Test.LLog.Debug.LogR($"interval = {Interval}");
+                if (m_accelTimingIt < accelTimings.Count - 1) { ++m_accelTimingIt; };
+                Interval *= speedUpRate;
+                return true;
+            }
+            else { return false; }
+        }
+        #endregion
+    }
+
     /// <summary> 読み取り専用Reactiveガチャ </summary>
     public interface IROReVendingMachine {
         /// <summary> ガチャ回したぜストリーム </summary>
@@ -18,10 +71,6 @@ namespace Main.Gacha {
 
     /// <summary> ガチャ </summary>
     public class VendingMachine : MonoBehaviour, IROReVendingMachine {
-        #region const
-        private static readonly float intervalLowerLimit = 0.03f;
-        #endregion
-
         #region field
         /// <summary> ガチャの実体 </summary>
         IVendingMachineImpl m_vendor;
@@ -30,23 +79,8 @@ namespace Main.Gacha {
         /// <summary> ガチャ回したぜストリーム </summary>
         Subject<IResult> m_onRollStream = new Subject<IResult>();
         Subject<(IResult, int)> m_onRollStream2 = new Subject<(IResult, int)>();
-
-        /// <summary> 現在の回し間隔[s] </summary>
-        float m_interval = 1f;
-        float Interval {
-            get => m_interval;
-            set => m_interval = Mathf.Max(value, intervalLowerLimit);
-        }
-        /// <summary> intervalを適用するタイミング </summary>
-        int NextAccelTiming => m_accelTimings[m_accelTimingIt];
-        /// <summary> intervalを適用するタイミングイテレータ </summary>
-        int m_accelTimingIt = 0;
-        /// <summary> intervalを適用するタイミングリスト </summary>
-        IReadOnlyList<int> m_accelTimings = new List<int>{
-            10, 15, 20, 25, 30, 50, 70, 100
-        };
-        /// <summary> 加速リスト </summary>
-        readonly float m_speedUpTheTime = 0.8f;
+        /// <summary> ガチャの回し間隔管理 </summary>
+        RollIntervalMgr m_intervalMgr;
 
         /// <summary> 今、何連目? </summary>
         public int RollCount { get; private set; } = 0;
@@ -66,15 +100,10 @@ namespace Main.Gacha {
         #region mono
         private void Start() {
             CheckUpVendor();
-            Interval = m_params.RollInterval;
+            m_intervalMgr = new RollIntervalMgr(m_params.RollInterval);
             OnRollDetail
-                .Subscribe(pair => {
-                    if (pair.Item2 == NextAccelTiming) {
-                        ChangeIntervalDinamically();
-                        RollEndless();
-                        du.Test.LLog.Debug.LogR($"interval = {Interval}");
-                    }
-                })
+                .Where(pair => m_intervalMgr.CheckAndUpdate(pair.Item2))
+                .Subscribe(_ => RollEndless())
                 .AddTo(this);
         }
         #endregion
@@ -88,7 +117,7 @@ namespace Main.Gacha {
             // TODO: Timing
             CheckUpVendor();
             m_rollStream = Observable
-                .Interval(TimeSpan.FromSeconds(Interval))
+                .Interval(m_intervalMgr.IntervalSec)
                 .Subscribe(_ => {
                     if (Roll().IsWants == IsWants.Win) { WonRolling(); }
                 })
@@ -115,17 +144,13 @@ namespace Main.Gacha {
         }
         /// <summary> ガチャで勝利した </summary>
         private void WonRolling() {
+            Reset();
+        }
+        /// <summary> ガチャをリセット </summary>
+        private void Reset() {
             StopRolling();
             RollCount = 0;
-            Interval = m_params.RollInterval;
-        }
-        /// <summary> 回してる途中でintervalを変更 </summary>
-        /// <param name="interval"> [VendingMachine.intervalLowerLimit, ∞) </param>
-        private void ChangeIntervalDinamically() {
-            Interval *= m_speedUpTheTime;
-            if (m_accelTimingIt < m_accelTimings.Count - 1) {
-                ++m_accelTimingIt;
-            }
+            m_intervalMgr = new RollIntervalMgr(m_params.RollInterval);
         }
         #endregion
     }
