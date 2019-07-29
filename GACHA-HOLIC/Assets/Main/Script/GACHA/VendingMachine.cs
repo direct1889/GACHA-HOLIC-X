@@ -1,6 +1,7 @@
 using UnityEngine;
 using UniRx;
 using System;
+using System.Collections.Generic;
 
 
 namespace Main.Gacha {
@@ -17,6 +18,10 @@ namespace Main.Gacha {
 
     /// <summary> ガチャ </summary>
     public class VendingMachine : MonoBehaviour, IROReVendingMachine {
+        #region const
+        private static readonly float intervalLowerLimit = 0.03f;
+        #endregion
+
         #region field
         /// <summary> ガチャの実体 </summary>
         IVendingMachineImpl m_vendor;
@@ -25,6 +30,23 @@ namespace Main.Gacha {
         /// <summary> ガチャ回したぜストリーム </summary>
         Subject<IResult> m_onRollStream = new Subject<IResult>();
         Subject<(IResult, int)> m_onRollStream2 = new Subject<(IResult, int)>();
+
+        /// <summary> 現在の回し間隔[s] </summary>
+        float m_interval = 1f;
+        float Interval {
+            get => m_interval;
+            set => m_interval = Mathf.Max(value, intervalLowerLimit);
+        }
+        /// <summary> intervalを適用するタイミング </summary>
+        int NextAccelTiming => m_accelTimings[m_accelTimingIt];
+        /// <summary> intervalを適用するタイミングイテレータ </summary>
+        int m_accelTimingIt = 0;
+        /// <summary> intervalを適用するタイミングリスト </summary>
+        IReadOnlyList<int> m_accelTimings = new List<int>{
+            10, 15, 20, 25, 30, 50, 70, 100
+        };
+        /// <summary> 加速リスト </summary>
+        readonly float m_speedUpTheTime = 0.8f;
 
         /// <summary> 今、何連目? </summary>
         public int RollCount { get; private set; } = 0;
@@ -37,32 +59,40 @@ namespace Main.Gacha {
         /// <summary> ガチャ回したぜストリーム </summary>
         public IObservable<IResult> OnRoll => m_onRollStream;
         public IObservable<(IResult, int)> OnRollDetail => m_onRollStream2;
+
+        private bool IsRolling => !(m_rollStream is null);
         #endregion
 
         #region mono
         private void Start() {
             CheckUpVendor();
+            Interval = m_params.RollInterval;
+            OnRollDetail
+                .Subscribe(pair => {
+                    if (pair.Item2 == NextAccelTiming) {
+                        ChangeIntervalDinamically();
+                        RollEndless();
+                        du.Test.LLog.Debug.LogR($"interval = {Interval}");
+                    }
+                })
+                .AddTo(this);
         }
         #endregion
 
         #region public
         /// <summary> 単発 </summary>
         public void RollOnce() => Roll();
-        /// <summary> 出るまで引けば確定 </summary>
+        /// <summary> 出るまで回す </summary>
         public void RollEndless() {
-            if (m_rollStream is null) {
-                // TODO: Timing
-                CheckUpVendor();
-                m_rollStream = Observable
-                    .Interval(TimeSpan.FromSeconds(m_params.RollInterval))
-                    .Subscribe(_ => {
-                        if (Roll().IsWants == IsWants.Win) { WonRolling(); }
-                    })
-                    .AddTo(this);
-            }
-            else {
-                StopRolling();
-            }
+            if (IsRolling) { StopRolling(); }
+            // TODO: Timing
+            CheckUpVendor();
+            m_rollStream = Observable
+                .Interval(TimeSpan.FromSeconds(Interval))
+                .Subscribe(_ => {
+                    if (Roll().IsWants == IsWants.Win) { WonRolling(); }
+                })
+                .AddTo(this);
         }
         public void CheckUpVendor() {
             m_vendor = m_params.CreateVendor();
@@ -87,6 +117,15 @@ namespace Main.Gacha {
         private void WonRolling() {
             StopRolling();
             RollCount = 0;
+            Interval = m_params.RollInterval;
+        }
+        /// <summary> 回してる途中でintervalを変更 </summary>
+        /// <param name="interval"> [VendingMachine.intervalLowerLimit, ∞) </param>
+        private void ChangeIntervalDinamically() {
+            Interval *= m_speedUpTheTime;
+            if (m_accelTimingIt < m_accelTimings.Count - 1) {
+                ++m_accelTimingIt;
+            }
         }
         #endregion
     }
