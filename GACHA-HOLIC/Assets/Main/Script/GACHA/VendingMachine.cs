@@ -102,6 +102,7 @@ namespace Main.Gacha {
             CheckUpVendor();
             m_intervalMgr = new RollIntervalMgr(m_params.RollInterval);
             OnRollDetail
+                .Where(pair => IsRolling)
                 .Where(pair => m_intervalMgr.CheckAndUpdate(pair.Item2))
                 .Subscribe(_ => { PauseRolling(); RollEndless(); })
                 .AddTo(this);
@@ -162,8 +163,10 @@ namespace Main.Gacha {
         /// - n連回数、回し速度ともに維持
         /// </summary>
         private void PauseRolling() {
-            m_rollStream.Dispose();
-            m_rollStream = null;
+            if (IsRolling) {
+                m_rollStream.Dispose();
+                m_rollStream = null;
+            }
         }
 #if false
         /// <summary>
@@ -171,8 +174,7 @@ namespace Main.Gacha {
         /// - n連回数維持、回し速度リセット
         /// </summary>
         private void StopRolling() {
-            m_rollStream.Dispose();
-            m_rollStream = null;
+            PauseRolling();
             m_intervalMgr = new RollIntervalMgr(m_params.RollInterval);
         }
 #endif
