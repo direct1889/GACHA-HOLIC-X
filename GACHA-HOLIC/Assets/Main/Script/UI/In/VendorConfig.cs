@@ -8,21 +8,27 @@ using UniRx;
 namespace Main.Gacha.UI {
 
     [System.Serializable]
-    public struct ParamConfigSerializeFields {
+    /// <summary> VendorConfigからSerializeFieldを分離 </summary>
+    public struct VendorConfigSerializeFields {
         #region field
+        /// <summary> 各レアリティの排出確率 </summary>
         [SerializeField] ProbI6InputField m_ifS5;
         [SerializeField] ProbI6InputField m_ifS4;
         [SerializeField] ProbI6InputField m_ifS3;
         [SerializeField] ProbI6InputField m_ifS2;
         [SerializeField] ProbI6InputField m_ifS1;
-
+        /// <summary> 狙っているレアリティ内での狙っているコンテンツの確率 </summary>
         public ProbI6InputField rateInRarity;
-
-        public FloatInputField rollInterval;
+        /// <summary> 各レアリティ排出率の合計 </summary>
         public du.dui.TMPArea total;
+
+        /// <summary> ガチャを連続で回すときの間隔[s] </summary>
+        public FloatInputField rollInterval;
+        /// <summary> OddsをVendingMachineに適用するボタン </summary>
         public UGUI.Button saveButton;
 
-        public OddsPrefPresetManager presets;
+        /// <summary> プリセット設定ボタン群 </summary>
+        public GachaConfPresetManager presets;
         #endregion
 
         #region getter
@@ -38,7 +44,7 @@ namespace Main.Gacha.UI {
     }
 
     /// <summary> 各種パラメータをユーザ入力から受け取るGUI </summary>
-    public interface IParamConfig {
+    public interface IVendorConfig {
         /// <value> 各レアリティの排出率表 </value>
         IOdds Odds { get; }
         /// <value> 狙っているレアリティ </value>
@@ -53,16 +59,16 @@ namespace Main.Gacha.UI {
         IVendingMachineImpl CreateVendor();
     }
 
-    public class ParamConfig : MonoBehaviour, IParamConfig {
+    public class VendorConfig : MonoBehaviour, IVendorConfig {
         #region field
         IDictionary<Rarity, IProbI6InputField> m_inputFields;
         ProbI6InputField m_rateInRarity;
         FloatInputField m_rollInterval;
         du.dui.ITextArea m_total;
         UGUI.Button m_saveButton;
-        IOddsPrefPresetManager m_presets;
+        IGachaConfPresetManager m_presets;
 
-        [SerializeField] ParamConfigSerializeFields m_serialized;
+        [SerializeField] VendorConfigSerializeFields m_serialized;
         #endregion
 
         #region getter
@@ -80,6 +86,13 @@ namespace Main.Gacha.UI {
                     if (i.Value.IsTarget) { return i.Key; }
                 }
                 return Rarity.None;
+            }
+            private set {
+                var current = TargetRarity;
+                if (current != value) {
+                    m_inputFields[current].SetIsTarget(false);
+                    m_inputFields[value].SetIsTarget(true);
+                }
             }
         }
         public IProb RateInRarity {
@@ -101,7 +114,7 @@ namespace Main.Gacha.UI {
 
                 m_presets
                     .OnClicked
-                    .Subscribe(odds => Set(odds))
+                    .Subscribe(conf => Set(conf))
                     .AddTo(this);
 
                 // 初期値設定
@@ -119,27 +132,24 @@ namespace Main.Gacha.UI {
 
         #region public
         public IVendingMachineImpl CreateVendor() {
-            Debug.LogError($"CreateVendor : {Odds}, {RateInRarity}");
+            du.Test.LLog.Debug.Log($"CreateVendor : {Odds}, {RateInRarity}");
             return new VendingMachineImpl(TargetRarity, new OddsPreferences(Odds, RateInRarity));
         }
         #endregion
 
         #region private
-        private void Set(IOddsPreferences pref) {
-            SetOdds(pref.Odds);
-            RateInRarity = pref.RateInRarity;
-        }
-        private void SetOdds(int s1, int s2, int s3, int s4, int s5) {
-            m_inputFields[Rarity.S1].SetProb(new ProbInt6(s1));
-            m_inputFields[Rarity.S2].SetProb(new ProbInt6(s2));
-            m_inputFields[Rarity.S3].SetProb(new ProbInt6(s3));
-            m_inputFields[Rarity.S4].SetProb(new ProbInt6(s4));
-            m_inputFields[Rarity.S5].SetProb(new ProbInt6(s5));
-        }
-        private void SetOdds(IOdds odds) {
+        private void Set(IVendorConfig conf) {
+            du.Test.Log.IsNull(conf, nameof(conf));
+            du.Test.Log.IsNull(conf.Odds, nameof(conf.Odds));
+            du.Test.Log.IsNull(m_inputFields, nameof(m_inputFields));
             foreach (Rarity r in ExRarity.Valids) {
-                m_inputFields[r].SetProb(odds[r]);
+                du.Test.Log.IsNull(m_inputFields[r], r.ToString());
+                du.Test.Log.IsNull(conf.Odds[r], r.ToString());
+                m_inputFields[r].SetProb(conf.Odds[r]);
             }
+            RateInRarity = conf.RateInRarity;
+            m_rollInterval.Value = conf.RollInterval;
+            TargetRarity = conf.TargetRarity;
         }
         /// <summary> Oddsの合計が1になっているか </summary>
         private void CheckUpTotalOne() {

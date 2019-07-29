@@ -21,13 +21,9 @@ namespace Main {
             #endregion
 
             #region ctor
-            public OddsPreferences(IOdds odds)
-            : this(odds, ProbInt6.One) {}
-            public OddsPreferences(int accS1, int accS2, int accS3, int accS4, int accS5, int accOIR)
-            : this(new OddsInt6(accS1, accS2, accS3, accS4, accS5), new ProbInt6(accOIR)) {}
-            public OddsPreferences(IOdds odds, IProb oddsInRarity) {
+            public OddsPreferences(IOdds odds, IProb rateInRarity) {
                 Odds = odds;
-                RateInRarity = oddsInRarity;
+                RateInRarity = rateInRarity;
             }
             #endregion
 

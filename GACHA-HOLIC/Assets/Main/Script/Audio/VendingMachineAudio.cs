@@ -14,7 +14,7 @@ namespace Main.Gacha.Audio {
             var vm = GetComponent<IROReVendingMachine>();
             vm  .OnRoll
                 .Subscribe(result => {
-                    if (result.IsWants) {
+                    if (result.IsWants == IsWants.Win) {
                         FanfareForWants();
                     }
                     else {

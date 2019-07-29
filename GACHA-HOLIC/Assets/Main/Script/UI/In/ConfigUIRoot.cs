@@ -2,6 +2,10 @@
 
 namespace Main.Gacha.UI {
 
+    /// <summary>
+    /// パラメータ設定画面の表示有無
+    /// - TODO: ひとまず非アクティブではなく画面外移動で対処中
+    /// </summary>
     public class ConfigUIRoot : MonoBehaviour {
         RectTransform m_recT;
 

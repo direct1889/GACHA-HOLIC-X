@@ -29,6 +29,17 @@ namespace Main {
                 => new List<Rarity>{ Rarity.S1, Rarity.S2, Rarity.S3, Rarity.S4, Rarity.S5 };
         }
 
+        /// <summary> 狙い目かどうか </summary>
+        public enum IsWants {
+            /// <value> 当たり </value>
+            Win,
+            /// <value> すり抜け (同レア/異コンテンツ) </value>
+            Slip,
+            /// <value> はずれ (レア度違い) </value>
+            Lose
+        }
+
+
         /// <summary> ガチャから出てくるもの </summary>
         public struct Content {
             public readonly Rarity rarity;
@@ -44,18 +55,18 @@ namespace Main {
             /// <value> 引いたもの </value>
             Content Content { get; }
             /// <value> 引いたものが狙ったものか </value>
-            bool IsWants { get; }
+            IsWants IsWants { get; }
         }
 
         /// <summary> ガチャの結果 </summary>
         public class Result : IResult {
             #region field
             public Content Content { get; }
-            public bool IsWants { get; }
+            public IsWants IsWants { get; }
             #endregion
 
             #region mono
-            public Result(Content content, bool isWants) {
+            public Result(Content content, IsWants isWants) {
                 Content = content;
                 IsWants = isWants;
             }
@@ -63,7 +74,7 @@ namespace Main {
 
             #region override
             public override string ToString() {
-                return (IsWants ? "○" : "×") + $"[{Content}]";
+                return (IsWants == IsWants.Win ? "○" : "×") + $"[{Content}]";
             }
             #endregion
         }

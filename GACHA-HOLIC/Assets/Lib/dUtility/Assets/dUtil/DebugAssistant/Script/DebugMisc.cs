@@ -13,9 +13,11 @@ namespace du.Test {
     }
 
     public interface ILogLayer {
-        void Log(object message);
-        void LogError(object message);
+        void Log         (object message);
+        void LogError    (object message);
         void LogAssertion(object message);
+        void Log         (string colorTag, object message);
+        void LogR        (object message);
     }
 
     public interface IOperableLogLayer : ILogLayer {
@@ -32,9 +34,11 @@ namespace du.Test {
         }
 
         public void SetActive(bool isActive) { m_isActive = isActive; }
-        public void Log            (object message) { if (m_isActive) { Debug.Log         ($"[{m_label}]::{message}"); } }
+        public void Log         (object message) { if (m_isActive) { Debug.Log         ($"[{m_label}]::{message}"); } }
         public void LogError    (object message) { if (m_isActive) { Debug.LogError    ($"[{m_label}]::{message}"); } }
         public void LogAssertion(object message) { if (m_isActive) { Debug.LogAssertion($"[{m_label}]::{message}"); } }
+        public void Log         (string colorTag, object message) { if (m_isActive) { Debug.Log         ($"<color={colorTag}>[{m_label}]::{message}</color>"); } }
+        public void LogR        (object message) { if (m_isActive) { Log("red", message); } }
     }
 
     public static class LayeredLog {
@@ -83,11 +87,11 @@ namespace du.Test {
 
         public static bool IsNull(object obj, string name) {
             if (obj == null) {
-                Debug.Log(name + " is null!!");
+                du.Test.LLog.Debug.LogR(name + " is null!!");
                 return true;
             }
             else {
-                Debug.Log(name + " is not null.");
+                du.Test.LLog.Debug.Log(name + " is not null.");
                 return false;
             }
         }

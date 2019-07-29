@@ -6,13 +6,13 @@ namespace Main.Gacha.UI {
     public class ResultUI : MonoBehaviour, IIndicator<IResult> {
         #region field
         IIndicator<Content> Content { get; set; }
-        IIndicator<bool> IsWants { get; set; }
+        IIndicator<IsWants> IsWants { get; set; }
         #endregion
 
         #region mono
         private void Awake() {
             Content = GetComponentInChildren<IIndicator<Content>>();
-            IsWants = GetComponentInChildren<IIndicator<bool>>();
+            IsWants = GetComponentInChildren<IIndicator<IsWants>>();
         }
         #endregion
 
