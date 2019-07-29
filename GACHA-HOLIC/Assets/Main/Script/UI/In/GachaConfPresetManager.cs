@@ -21,10 +21,10 @@ namespace Main.Gacha.UI {
         #endregion
 
         #region mono
-        private void Awake() {
+        private void Start() {
             foreach (IPresetButton i in m_buttons) {
-                i.OnClicked.Subscribe(
-                    name => m_presetStream.OnNext(OddsAsset.At(name)))
+                i.OnClicked
+                    .Subscribe(name => m_presetStream.OnNext(OddsAsset.At(name)))
                     .AddTo(this);
             }
         }

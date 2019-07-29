@@ -95,11 +95,13 @@ namespace du.App {
         private void InitializeDebugger() {
             GetComponent<Test.LayerdLogMgr>().InitializeLLog();
             Test.DebugAssistant.Instance.gameObject.SetActive(m_isDebugMode);
+            du.Test.LLog.Boot.Log("Debugger Initialized.");
         }
         private void InitializeCursor() {
             // Cursor.visible = m_mcmode == MouseCursorMode.Visible;
             Cursor.visible = m_mcmode != MouseCursorMode.Invisible;
             // OSUI.Instance.SetEnable(m_mcmode == MouseCursorMode.Detail);
+            du.Test.LLog.Boot.Log("Cursor Initialized.");
         }
         private void Initialize_di() {
             di.GamePad.Initialize();
@@ -109,6 +111,7 @@ namespace du.App {
                 di.Id.GamePad._3P,
                 di.Id.GamePad._4P
                 );
+            du.Test.LLog.Boot.Log("Input Initialized.");
         }
         private void InitializeAudio() {
             // utility.sound.SoundManager.Init();
@@ -116,16 +119,17 @@ namespace du.App {
             // .MasterVolumeSet(
             float volume = m_audioDesc.isMute ? 0f : m_audioDesc.masterVolume;
             // );
+            du.Test.LLog.Boot.Log("Audio Initialized.");
         }
         private void InitializeScene() {
             if (SceneManager.GetSceneByName(m_pilotScene).IsValid()) {
-                if (Enumerable.Range(0, SceneManager.sceneCount)
-                    .Select(SceneManager.GetSceneAt)
-                    .All(scn => { return scn.name != m_pilotScene; }))
-                {
-                    SceneManager.LoadSceneAsync(m_pilotScene, LoadSceneMode.Additive);
-                }
+                // 既にHierarchy上に存在する場合、再読み込みを行わない
+                du.Test.LLog.Boot.Log($"{m_pilotScene} is already exist.");
             }
+            else {
+                SceneManager.LoadSceneAsync(m_pilotScene, LoadSceneMode.Additive);
+            }
+            du.Test.LLog.Boot.Log("Sequence Initialized.");
         }
         #endregion
 

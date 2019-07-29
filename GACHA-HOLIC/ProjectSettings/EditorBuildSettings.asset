@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Lib/dUtility/Assets/dUtil/duScenes/AppBase.unity
+    guid: ad666e21f61e14aefbf1738ff793f7b3
+  - enabled: 1
+    path: Assets/Scene/GACHA.unity
+    guid: 7676b4232f9934d63af1819ba3cb4c89
   m_configObjects: {}
