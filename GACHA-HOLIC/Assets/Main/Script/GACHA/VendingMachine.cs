@@ -103,7 +103,7 @@ namespace Main.Gacha {
             m_intervalMgr = new RollIntervalMgr(m_params.RollInterval);
             OnRollDetail
                 .Where(pair => m_intervalMgr.CheckAndUpdate(pair.Item2))
-                .Subscribe(_ => RollEndless())
+                .Subscribe(_ => { PauseRolling(); RollEndless(); })
                 .AddTo(this);
         }
         #endregion
@@ -113,7 +113,9 @@ namespace Main.Gacha {
         public void RollOnce() => Roll();
         /// <summary> 出るまで回す </summary>
         public void RollEndless() {
-            if (IsRolling) { StopRolling(); }
+            // すでに回っているなら何もしない
+            if (IsRolling) { return; }
+
             // TODO: Timing
             CheckUpVendor();
             m_rollStream = Observable
@@ -126,6 +128,20 @@ namespace Main.Gacha {
         public void CheckUpVendor() {
             m_vendor = m_params.CreateVendor();
         }
+        /// <summary> 止まっていれば回す、回していれば一時停止 </summary>
+        public void RollEndlessOrPause() {
+            if (IsRolling) { PauseRolling(); }
+            else { RollEndless(); }
+        }
+        /// <summary>
+        /// ガチャをリセット
+        /// - n連回数、回し速度ともにリセット
+        /// </summary>
+        public void Reset() {
+            PauseRolling();
+            RollCount = 0;
+            m_intervalMgr = new RollIntervalMgr(m_params.RollInterval);
+        }
         #endregion
 
         #region private
@@ -137,21 +153,29 @@ namespace Main.Gacha {
             m_onRollStream2.OnNext((result, RollCount));
             return result;
         }
-        /// <summary> 連続ガチャを停止 </summary>
-        private void StopRolling() {
-            m_rollStream.Dispose();
-            m_rollStream = null;
-        }
         /// <summary> ガチャで勝利した </summary>
         private void WonRolling() {
             Reset();
         }
-        /// <summary> ガチャをリセット </summary>
-        private void Reset() {
-            StopRolling();
-            RollCount = 0;
+        /// <summary>
+        /// 連続ガチャを一時停止
+        /// - n連回数、回し速度ともに維持
+        /// </summary>
+        private void PauseRolling() {
+            m_rollStream.Dispose();
+            m_rollStream = null;
+        }
+#if false
+        /// <summary>
+        /// 連続ガチャを一時停止
+        /// - n連回数維持、回し速度リセット
+        /// </summary>
+        private void StopRolling() {
+            m_rollStream.Dispose();
+            m_rollStream = null;
             m_intervalMgr = new RollIntervalMgr(m_params.RollInterval);
         }
+#endif
         #endregion
     }
 
