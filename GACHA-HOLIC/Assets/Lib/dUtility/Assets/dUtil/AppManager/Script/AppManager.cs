@@ -104,6 +104,7 @@ namespace du.App {
             du.Test.LLog.Boot.Log("Cursor Initialized.");
         }
         private void Initialize_di() {
+            try {
             di.GamePad.Initialize();
             di.Id.IdConverter.SetPlayer2GamePad(
                 di.Id.GamePad._1P,
@@ -111,6 +112,10 @@ namespace du.App {
                 di.Id.GamePad._3P,
                 di.Id.GamePad._4P
                 );
+            }
+            catch (System.Exception) {
+                du.Test.LLog.Boot.Log("GamePadInputSettings(CSV) is not found.");
+            }
             du.Test.LLog.Boot.Log("Input Initialized.");
         }
         private void InitializeAudio() {

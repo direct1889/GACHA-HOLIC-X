@@ -48,6 +48,7 @@ namespace du.Test {
             if (m_layers == null) {
                 m_layers = new Dictionary<string, IOperableLogLayer>();
                 Add("BOOT"   , isActiveDefault);
+                Add("dUTIL"  , isActiveDefault);
                 Add("DEBUG"  , isActiveDefault);
                 Add("MISC"   , isActiveDefault);
                 Add("MAIN:BOOT", isActiveDefault);
@@ -78,6 +79,7 @@ namespace du.Test {
 
     public static class LLog {
         public static ILogLayer Boot  => LayeredLog.At("BOOT");
+        public static ILogLayer dUTIL => LayeredLog.At("dUTIL");
         public static ILogLayer Debug => LayeredLog.At("DEBUG");
         public static ILogLayer Misc  => LayeredLog.At("MISC");
         public static ILogLayer MBoot => LayeredLog.At("MAIN:BOOT");

@@ -85,7 +85,7 @@ namespace du.di.Id {
 
             /// <summary> GamePadIDとGamePadRawIDの対応関係を一括設定 </summary>
             public void Register(IDictionary<GamePad, GamePadRaw> gp2raw) {
-                Debug.Log(ToString());
+                du.Test.LLog.dUTIL.Log(ToString());
                 gp2raw.Clear();
                 gp2raw.Add(GamePad._1P, raw1P);
                 gp2raw.Add(GamePad._2P, raw2P);

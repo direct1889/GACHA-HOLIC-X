@@ -139,12 +139,7 @@ namespace Main.Gacha.UI {
 
         #region private
         private void Set(IVendorConfig conf) {
-            du.Test.Log.IsNull(conf, nameof(conf));
-            du.Test.Log.IsNull(conf.Odds, nameof(conf.Odds));
-            du.Test.Log.IsNull(m_inputFields, nameof(m_inputFields));
             foreach (Rarity r in ExRarity.Valids) {
-                du.Test.Log.IsNull(m_inputFields[r], r.ToString());
-                du.Test.Log.IsNull(conf.Odds[r], r.ToString());
                 m_inputFields[r].SetProb(conf.Odds[r]);
             }
             RateInRarity = conf.RateInRarity;
