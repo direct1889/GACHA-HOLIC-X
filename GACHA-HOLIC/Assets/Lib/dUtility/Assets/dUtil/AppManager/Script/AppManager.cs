@@ -84,9 +84,8 @@ namespace du.App {
             Debug.Log("Boot Apprication");
             m_resolutionDesc.SetResolution();
             InitializeDebugger();
-            // di.RxTouchInput.Initialize();
             InitializeCursor();
-            // DG.Tweening.DOTween.Init();
+            DG.Tweening.DOTween.Init();
             Initialize_di();
             InitializeAudio();
             InitializeScene();
@@ -104,6 +103,7 @@ namespace du.App {
             du.Test.LLog.Boot.Log("Cursor Initialized.");
         }
         private void Initialize_di() {
+            // di.RxTouchInput.Initialize();
             try {
             di.GamePad.Initialize();
             di.Id.IdConverter.SetPlayer2GamePad(
