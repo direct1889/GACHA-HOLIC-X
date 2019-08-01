@@ -66,6 +66,10 @@ namespace du.Cmp {
         public TValue Front => At(0);
         /// <returns> 空ならnull </returns>
         public TValue Back => At(Count - 1);
+        /// <returns> 順序ありキーリスト </returns>
+        public ICollection<TKey> Keys => Order;
+        /// <returns> 順序あり値リスト </returns>
+        public ICollection<TValue> Values => Data.Values;
         #endregion
 
         #region IOrderedMap

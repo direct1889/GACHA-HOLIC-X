@@ -1,14 +1,18 @@
 ﻿
 namespace du.Test {
 
-    public class DebugAssistant : App.SingletonMonoBehaviour<DebugAssistant> {
+    public interface IDebugAssistant {
+        TestLogger TestLog { get; }
+        void SetTestLog(TestLogger log);
+    }
+
+    public class DebugAssistant : Cmp.SingletonMonoBehaviour<DebugAssistant>, IDebugAssistant {
         #region field
         ITestCode m_test;
         #endregion
 
         #region field property
         public TestLogger TestLog { get; private set; }
-        public Audio.SoundAsset Sound { get; private set; }
         #endregion
 
         #region mono
@@ -22,7 +26,6 @@ namespace du.Test {
 
         #region public
         public void SetTestLog(TestLogger log) => TestLog = log;
-        public void SetAudioAsset(Audio.SoundAsset sndAsset) => Sound = sndAsset;
         #endregion
 
     }

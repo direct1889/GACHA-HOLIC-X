@@ -7,7 +7,7 @@
 
 using UnityEngine;
 
-namespace du.App {
+namespace du.Cmp {
 
     /// <summary>
     /// MonoBehaviourを継承したシングルトン

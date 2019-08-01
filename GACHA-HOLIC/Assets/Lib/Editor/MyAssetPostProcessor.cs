@@ -3,7 +3,9 @@ using UnityEditor;
 
 namespace du.Edit {
 
-    public class AssetPostProcessorTest : AssetPostprocessor {
+    /// <summary> アセットのインポート時に走る設定 </summary>
+    public class MyAssetPostProcessor : AssetPostprocessor {
+        /// <summary> AudioClip のインポート時の処理 </summary>
         private void OnPostprocessAudio(AudioClip audioClip) {
             var audioImporter = assetImporter as AudioImporter;
             string path = audioImporter.assetPath;

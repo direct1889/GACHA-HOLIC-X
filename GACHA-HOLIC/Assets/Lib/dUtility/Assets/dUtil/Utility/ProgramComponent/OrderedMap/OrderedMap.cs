@@ -22,6 +22,10 @@ namespace du.Cmp {
         TValue Front { get; }
         /// <returns> 空ならnull </returns>
         TValue Back { get; }
+        /// <returns> 順序ありキーリスト </returns>
+        ICollection<TKey> Keys { get; }
+        /// <returns> 順序あり値リスト </returns>
+        ICollection<TValue> Values { get; }
     }
 
     /// <summary>

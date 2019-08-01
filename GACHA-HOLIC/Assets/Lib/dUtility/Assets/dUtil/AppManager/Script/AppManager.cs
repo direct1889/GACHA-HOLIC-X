@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System;
 using UnityEngine.SceneManagement;
-using System.Linq;
-using UniRx;
 
 
 /// <summary> アプリケーション全体に関わる情報 </summary>
@@ -42,7 +40,7 @@ namespace du.App {
     /// アプリ全体に関わる基本的な設定
     /// - アプリ起動時に値が設定され、動的な変更は不能
     /// </summary>
-    public class AppManager : SingletonMonoBehaviour<AppManager>, IAppManager {
+    public class AppManager : Cmp.SingletonMonoBehaviour<AppManager>, IAppManager {
         #region field
         /// <summary> AppManagerの起動が済み次第呼び出されるシーン名 </summary>
         [SerializeField] string m_pilotScene;

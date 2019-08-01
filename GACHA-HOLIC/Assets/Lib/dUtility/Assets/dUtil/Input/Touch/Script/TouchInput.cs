@@ -101,7 +101,7 @@ namespace du.di {
         // }
     }
 
-    public class TouchMgr : du.App.SingletonMonoBehaviour<TouchMgr> {
+    public class TouchMgr : du.Cmp.SingletonMonoBehaviour<TouchMgr> {
 
         #region field
         ITouchMgrImpl m_impl;
