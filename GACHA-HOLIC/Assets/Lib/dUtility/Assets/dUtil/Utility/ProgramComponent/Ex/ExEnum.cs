@@ -7,13 +7,13 @@ using System.Collections.Generic;
 namespace du.Audio {
 
     public static class ExEnums {
-        public static ExEnum<Kind> m_kind;
-        public static ExEnum<Kind> Kind {
+        public static ExEnum<Category> m_category;
+        public static ExEnum<Category> Category {
             get {
-                if (m_kind is null) { ExKind.Create(); }
-                return m_kind;
+                if (m_category is null) { ExCategory.Create(); }
+                return m_category;
             }
-            set => m_kind = m_kind ?? value;
+            set => m_category = m_category ?? value;
         }
     }
 

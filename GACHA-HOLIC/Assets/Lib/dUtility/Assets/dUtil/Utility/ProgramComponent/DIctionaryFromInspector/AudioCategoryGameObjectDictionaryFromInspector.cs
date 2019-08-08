@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Key = du.Audio.Kind;
+using Key = du.Audio.Category;
 using Value = UnityEngine.GameObject;
 
 namespace du.Cmp {
@@ -7,7 +7,7 @@ namespace du.Cmp {
     /// <summary>
     /// インスペクタの値から辞書を生成
     /// </summary>
-    public class AudioKindGameObjectDictionaryFromInspector
+    public class AudioCategoryGameObjectDictionaryFromInspector
         : DictionaryFromInspector<Key, Value>
     {
         /// <summary> List<Key>とList<Value>.GetComponent<Component>()からDictionaryを生成 </summary>

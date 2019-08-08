@@ -6,20 +6,20 @@ namespace du.Audio {
     /// <summary> AudioClip のコンテナ </summary>
     public interface ISoundAsset {
         #region getter
-        AudioClip At(Kind kind, string key);
+        AudioClip At(Category category, string key);
         #endregion
     }
 
     /// <summary> AudioClip のコンテナ </summary>
     public class SoundAsset : du.Cmp.SingletonMonoBehaviour<SoundAsset>, ISoundAsset {
         #region field
-        IDictionary<Kind, IDictionary<string, AudioClip>> m_clips
-            = new Dictionary<Kind, IDictionary<string, AudioClip>>();
+        IDictionary<Category, IDictionary<string, AudioClip>> m_clips
+            = new Dictionary<Category, IDictionary<string, AudioClip>>();
         #endregion
 
         #region getter
-        public AudioClip At(Kind kind, string key) => m_clips[kind][key];
-        // public IDictionary<string, AudioClip> At(Kind kind) => m_clips[kind];
+        public AudioClip At(Category category, string key) => m_clips[category][key];
+        // public IDictionary<string, AudioClip> At(Category category) => m_clips[category];
         #endregion
 
         #region ctor
@@ -30,8 +30,11 @@ namespace du.Audio {
 
         #region private
         private void Load() {
-            var m_assets = GetComponent<du.Cmp.AudioKindGameObjectDictionaryFromInspector>().ToDict();
-            // m_clips.Add(Kind.MainSE, m_assets[Kind.MainSE];
+            var clips = GetComponent<du.Cmp.AudioCategoryGameObjectDictionaryFromInspector>()
+                .ToDictAsComponent<du.Cmp.AudioClipDictionaryFromInspector>();
+            foreach (var i in clips) {
+                m_clips.Add(i.Key, i.Value.ToDict());
+            }
         }
         #endregion
     }

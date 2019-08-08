@@ -1,5 +1,6 @@
 using UnityEngine;
 using UniRx;
+using static Main.Gacha.ExRarity;
 
 namespace Main.Gacha.Audio {
 
@@ -27,17 +28,10 @@ namespace Main.Gacha.Audio {
 
         #region private
         private void FanfareForWants() {
-            m_source.Play();
+            du.Mgr.Audio[du.Audio.Category.MainSE].Play("Win");
         }
         private void Fanfare(Rarity rarity) {
-            switch (rarity) {
-                case Rarity.S1: { m_source.Play(); return; }
-                case Rarity.S2: { m_source.Play(); return; }
-                case Rarity.S3: { m_source.Play(); return; }
-                case Rarity.S4: { m_source.Play(); return; }
-                case Rarity.S5: { m_source.Play(); return; }
-                default       : { m_source.Play(); return; }
-            }
+            du.Mgr.Audio[du.Audio.Category.MainSE].Play(rarity.ToStr());
         }
         #endregion
     }
