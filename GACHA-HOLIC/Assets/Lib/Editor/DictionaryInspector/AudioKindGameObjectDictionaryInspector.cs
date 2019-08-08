@@ -17,26 +17,28 @@ namespace du.Edit {
     [CustomEditor(typeof(Dict))]
     public class AudioKindGameObjectDictionaryInspector : Editor {
         #region field
-        Dict m_data;
+        // Dict m_data;
+        SerializedProperty m_count;
+        SerializedProperty m_keys;
+        SerializedProperty m_values;
         #endregion
 
         #region editor
         private void OnEnable() {
-            if (m_data is null) {
-                m_data = (Dict)serializedObject.targetObject;
-                m_data.Count = Audio.ExKind.Count;
-                int i = 0;
-                foreach (var key in Audio.ExKind.Keys) {
-                    m_data.Keys[i] = key;
-                    ++i;
-                }
+            m_count  = serializedObject.FindProperty("m_count");
+            m_keys   = serializedObject.FindProperty("m_keys");
+            m_values = serializedObject.FindProperty("m_values");
+            serializedObject.Update();
+            Resize(Audio.ExKind.Count);
+            for (int i = 0; i < m_count.intValue; ++i) {
+                AtKey(i).enumValueIndex = (int)Audio.ExKind.FromInt(i);
             }
+            serializedObject.ApplyModifiedProperties();
         }
 
         public override void OnInspectorGUI() {
             serializedObject.Update();
-            int i = 0;
-            foreach (var key in Audio.ExKind.Keys) {
+            for (int i = 0; i < m_count.intValue; ++i) {
                 // Begin/EndHorizontal() : 囲んだ要素を横に並べる
                 EditorGUILayout.BeginHorizontal();
                 {
@@ -45,16 +47,25 @@ namespace du.Edit {
                     // XXXField([label], xxx, [layout]) : XXXの編集可能Boxを表示
                     /// <param name="xxx"> 本体の値を設定 </param>
                     /// <return> 最新の値 </return>
-                    EditorGUILayout.LabelField($"{key}", GUILayout.MaxWidth(110));
-                    // m_data.Keys[i] = (Key)EditorGUILayout.EnumPopup(m_data.Keys[i], GUILayout.MaxWidth(150));
+                    EditorGUILayout.LabelField($"{Audio.ExKind.FromInt(i)}", GUILayout.MaxWidth(110));
                     /// <param name="allowSceneObjects"> Sceneに存在するGameObjectの取得を許可 </param>
-                    m_data.Values[i] = EditorGUILayout.ObjectField(m_data.Values[i], typeof(Value), true, GUILayout.MaxWidth(230)) as Value;
+                    AtValue(i).objectReferenceValue
+                        = EditorGUILayout.ObjectField(AtValue(i).objectReferenceValue, typeof(Value), true, GUILayout.MaxWidth(230)) as Value;
                 }
                 EditorGUILayout.EndHorizontal();
-                ++i;
             }
             // 内部キャッシュに値を保存
             serializedObject.ApplyModifiedProperties();
+        }
+        #endregion
+
+        #region private
+        private SerializedProperty AtKey(int i) => m_keys.GetArrayElementAtIndex(i);
+        private SerializedProperty AtValue(int i) => m_values.GetArrayElementAtIndex(i);
+        private void Resize(int size) {
+            m_count.intValue = size;
+            m_keys.arraySize = size;
+            m_values.arraySize = size;
         }
         #endregion
     }

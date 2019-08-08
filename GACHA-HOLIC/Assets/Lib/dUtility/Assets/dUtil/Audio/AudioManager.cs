@@ -16,12 +16,14 @@ namespace du.Audio {
 
         IDictionary<Kind, AudioSource> m_sources;
 
-        [SerializeField] List<AudioSource> m_serializeSources;
+        // [SerializeField] List<AudioSource> m_serializeSources;
         #endregion
 
         #region mono
         private void Awake() {
             Test.LLog.Boot.Log("AudioManager awake.");
+            m_sources = GetComponent<du.Cmp.AudioKindGameObjectDictionaryFromInspector>().ToDictAsComponent<AudioSource>();
+            /*
             m_sources = new Dictionary<Kind, AudioSource>{
                 { Kind.MainSE, m_serializeSources[0] },
                 { Kind.MenuSE, m_serializeSources[1] },
@@ -30,6 +32,7 @@ namespace du.Audio {
                 { Kind.Jingle, m_serializeSources[4] },
                 { Kind.Voice , m_serializeSources[5] },
             };
+            */
         }
         #endregion
 

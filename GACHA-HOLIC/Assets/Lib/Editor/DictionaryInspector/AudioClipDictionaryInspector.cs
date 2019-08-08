@@ -27,9 +27,7 @@ namespace du.Edit {
 
         public override void OnInspectorGUI() {
             serializedObject.Update();
-            m_count.intValue = EditorGUILayout.IntField("Count", m_count.intValue);
-            m_keys.arraySize = m_count.intValue;
-            m_values.arraySize = m_count.intValue;
+            Resize(EditorGUILayout.IntField("Count", m_count.intValue));
 
             for (int i = 0; i < m_count.intValue; ++i) {
                 // Begin/EndHorizontal() : 囲んだ要素を横に並べる
@@ -40,14 +38,14 @@ namespace du.Edit {
                     // XXXField([label], xxx, [layout]) : XXXの編集可能Boxを表示
                     /// <param name="xxx"> 本体の値を設定 </param>
                     /// <return> 最新の値 </return>
-                    m_keys.GetArrayElementAtIndex(i).stringValue
+                    AtKey(i).stringValue
                         = EditorGUILayout.TextField(
-                            m_keys.GetArrayElementAtIndex(i).stringValue,
+                            AtKey(i).stringValue,
                             GUILayout.MaxWidth(150));
                     /// <param name="allowSceneObjects"> Sceneに存在するGameObjectの取得を不許可 </param>
-                    m_values.GetArrayElementAtIndex(i).objectReferenceValue
+                    AtValue(i).objectReferenceValue
                         = EditorGUILayout.ObjectField(
-                            m_values.GetArrayElementAtIndex(i).objectReferenceValue,
+                            AtValue(i).objectReferenceValue,
                             typeof(Value), false,
                             GUILayout.MaxWidth(150));
                 }
@@ -56,6 +54,16 @@ namespace du.Edit {
 
             // 内部キャッシュに値を保存
             serializedObject.ApplyModifiedProperties();
+        }
+        #endregion
+
+        #region private
+        private SerializedProperty AtKey(int i) => m_keys.GetArrayElementAtIndex(i);
+        private SerializedProperty AtValue(int i) => m_values.GetArrayElementAtIndex(i);
+        private void Resize(int size) {
+            m_count.intValue = size;
+            m_keys.arraySize = size;
+            m_values.arraySize = size;
         }
         #endregion
     }

@@ -47,9 +47,14 @@ namespace du.Cmp {
 
         #region IReadOnlyOrderedMap
         /// <returns> 見つからなければ null </returns>
+        public TKey AtKey(int i) {
+            if (Order.IsValidIndex(i)) { return Order[i]; }
+            else { return default(TKey); }
+        }
+        /// <returns> 見つからなければ null </returns>
         public TValue At(int i) {
             if (Order.IsValidIndex(i)) { return Data[Order[i]]; }
-            else { return null; }
+            else { return default(TValue); }
         }
         /// <returns> 見つからなければ null </returns>
         public TValue At(TKey key) => Data.At(key);
