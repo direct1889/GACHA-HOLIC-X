@@ -30,7 +30,7 @@ namespace du.Audio {
 
         #region private
         private void Load() {
-            var m_assets = GetComponent<du.Cmp.AudioClipDictionaryFromInspector>().ToDict();
+            var m_assets = GetComponent<du.Cmp.AudioKindGameObjectDictionaryFromInspector>().ToDict();
             // m_clips.Add(Kind.MainSE, m_assets[Kind.MainSE];
         }
         #endregion

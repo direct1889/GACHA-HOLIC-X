@@ -9,8 +9,9 @@ namespace du.Cmp {
     /// </summary>
     public class DictionaryFromInspector<Key, Value> : MonoBehaviour {
         #region field
-        private List<Key> m_keys = new List<Key>();
-        private List<Value> m_values = new List<Value>();
+        [SerializeField] private List<Key> m_keys = new List<Key>();
+        [SerializeField] private List<Value> m_values = new List<Value>();
+        [SerializeField] int m_count = 0;
         #endregion
 
         #region property
@@ -18,14 +19,21 @@ namespace du.Cmp {
         public IList<Value> Values => m_values;
         /// <value> 要素数 </value>
         public int Count {
+            // get => m_keys.Count;
             get => m_keys.Count;
             set {
                 if (value != Count) {
+                    Debug.Log($"<color=red>Count: {Count} -> {value}</color>");
+                    m_count = value;
                     m_keys.Resize(value);
                     m_values.Resize(value);
                 }
             }
         }
+        #endregion
+
+        #region mono
+        void Awake() => Count = m_count;
         #endregion
 
         #region public
