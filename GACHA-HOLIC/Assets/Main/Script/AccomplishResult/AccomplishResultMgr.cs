@@ -4,24 +4,37 @@ using System;
 using UniRx;
 
 namespace Main.Gacha {
+
+    /// <summary> フェス(=一連のガチャ)の結果管理 </summary>
     public interface IAccomplishResultMgr {
         /// <summary> ガチャの結果を記録 </summary>
         void Rolled(Rarity rarity, int rollCount);
     }
 
+    /// <summary> フェス(=一連のガチャ)の結果管理 </summary>
     public class AccomplishResultMgr : MonoBehaviour, IAccomplishResultMgr {
         #region module
+        /// <summary> フェス結果画面の表示項目群 </summary>
         [Serializable]
         private struct Columns {
+            /// <summary> ガチャ回数 </summary>
             public UI.ResultColumn rollCount;
+            /// <summary> ☆5出現数 </summary>
             public UI.ResultColumn s5s;
+            /// <summary> ☆4出現数 </summary>
             public UI.ResultColumn s4s;
+            /// <summary> ☆3出現数 </summary>
             public UI.ResultColumn s3s;
+            /// <summary> ☆2出現数 </summary>
             public UI.ResultColumn s2s;
+            /// <summary> ☆1出現数 </summary>
             public UI.ResultColumn s1s;
+            /// <summary> 石消費数 </summary>
             public UI.ResultColumn spentIshis;
+            /// <summary> 消費金額 </summary>
             public UI.ResultColumn spentMoney;
 
+            /// <summary> 指定レアリティの出現回数 </summary>
             public UI.ResultColumn CountOfRarity(Rarity rarity) {
                 switch (rarity) {
                     case Rarity.S5: return s5s;
@@ -36,6 +49,7 @@ namespace Main.Gacha {
         #endregion
 
         #region field
+        /// <summary> 各レアリティの出現回数 </summary>
         IDictionary<Rarity, int> m_count = new Dictionary<Rarity, int>{
             { Rarity.S5, 0 },
             { Rarity.S4, 0 },
@@ -43,8 +57,11 @@ namespace Main.Gacha {
             { Rarity.S2, 0 },
             { Rarity.S1, 0 },
         };
+        /// <summary> フェス結果画面の表示項目群 </summary>
         [SerializeField] Columns m_columns;
+        /// <summary> 設定 </summary>
         [SerializeField] UI.AccomplishResultConfig m_config;
+        /// <summary> ガチャマシン </summary>
         [SerializeField] VendingMachine m_vendor;
         #endregion
 

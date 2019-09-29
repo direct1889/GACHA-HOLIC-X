@@ -1359,6 +1359,7 @@ GameObject:
   - component: {fileID: 246194238}
   - component: {fileID: 246194237}
   - component: {fileID: 246194236}
+  - component: {fileID: 246194239}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1432,6 +1433,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &246194239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246194235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49f18405846ca4b8596c676700818d66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_url: https://www.amazon.jp/hz/wishlist/ls/KYH8EWQE45JW?ref_=wl_share
 --- !u!114 &338975160 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3131339597128582005, guid: e91276d4549664bacb45cc6254ac61d1,
@@ -9880,7 +9894,7 @@ PrefabInstance:
     - target: {fileID: 7220192910256366664, guid: f5a6a32b6cc0145c68bbd67e2df2c6d5,
         type: 3}
       propertyPath: m_keys.Array.data[5]
-      value: Through
+      value: Slip
       objectReference: {fileID: 0}
     - target: {fileID: 7220192910256366664, guid: f5a6a32b6cc0145c68bbd67e2df2c6d5,
         type: 3}
