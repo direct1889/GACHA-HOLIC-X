@@ -63,11 +63,13 @@ namespace Main.Gacha {
         static OddsAsset() {
             Preset = new Dictionary<string, IGachaConfigPreset>();
 
-            //       KeyName      , OddsAsXXXXXX(S1,   S2,    S3,   S4,     S5),    Target,  RateInTargetRarity, Interval,  IshiPrice,n連,石/n連
-            Register("Reset"      , new OddsInt6(0,     0,     0,    0,      0), Rarity.S5, ProbInt6.Zero      , 0.3f,              0f,  1,    1);
-            Register("S5Fixed"    , new OddsInt6(0,     0,     0,    0, 100000), Rarity.S5, ProbInt6.One       , 0.3f,              0f,  1,    1);
-            Register("MercStoria" , new OddsInt6(0, 23890, 67530, 5580,   3000), Rarity.S5, new ProbInt6(33333), 0.3f, 10400f /   168f, 10,   45);
-            Register("BanG_Dream!", new OddsInt6(0, 88500,  8500, 3000,      0), Rarity.S4, new ProbInt6(16700), 0.3f,  9800f /  8400f, 10, 2500);
+            //       KeyName         , OddsAsXXXXXX(S1,   S2,    S3,   S4,     S5),    Target,  RateInTargetRarity, Interval,  IshiPrice,n連,石/n連
+            Register("Reset"         , new OddsInt6(0,     0,     0,    0,      0), Rarity.S5, ProbInt6.Zero      , 0.3f,              0f,  1,    1);
+            Register("S5Fixed"       , new OddsInt6(0,     0,     0,    0, 100000), Rarity.S5, ProbInt6.One       , 0.3f,              0f,  1,    1);
+            Register("MercStoria"    , new OddsInt6(0, 23890, 67530, 5580,   3000), Rarity.S5, new ProbInt6(60000), 0.3f, 10500f /   168f, 10,   45);
+            Register("BanG_Dream!"   , new OddsInt6(0, 88500,  8500, 3000,      0), Rarity.S4, new ProbInt6(16700), 0.3f, 10000f /  8400f, 10, 2500);
+            Register("LoveLive!SIF"  , new OddsInt6(0, 80000, 15000, 4000,   1000), Rarity.S4, new ProbInt6(50000), 0.3f,  5140f /    86f, 11,   50);
+            Register("LoveLive!SIFAS", new OddsInt6(0,     0, 95000,    0,   5000), Rarity.S4, new ProbInt6(10000), 0.3f, 10500f /  1750f, 10,  500);
         }
         #endregion
 
@@ -92,6 +94,7 @@ namespace Main.Gacha {
                 Preset[key] = new GachaConfigPreset(odds, targetRarity, rateInRarity, rollInterval, ishiPrice, consecutiveNum, numOfIshi4Consecutive);
             }
             else {
+                du.Test.LLog.Debug.Log($"{key} register");
                 Preset.Add(key, new GachaConfigPreset(odds, targetRarity, rateInRarity, rollInterval, ishiPrice, consecutiveNum, numOfIshi4Consecutive));
             }
         }

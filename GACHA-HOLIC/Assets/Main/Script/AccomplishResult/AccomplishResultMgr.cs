@@ -57,12 +57,16 @@ namespace Main.Gacha {
             { Rarity.S2, 0 },
             { Rarity.S1, 0 },
         };
+        float m_spentMoneyCache;
+
         /// <summary> フェス結果画面の表示項目群 </summary>
         [SerializeField] Columns m_columns;
         /// <summary> 設定 </summary>
         [SerializeField] UI.AccomplishResultConfig m_config;
         /// <summary> ガチャマシン </summary>
         [SerializeField] VendingMachine m_vendor;
+
+        [SerializeField] Main.Gacha.Accomplish.WishList m_wishList;
         #endregion
 
         #region mono
@@ -87,7 +91,13 @@ namespace Main.Gacha {
             m_columns.CountOfRarity(rarity).SetValue(++m_count[rarity]);
             var ishis = m_config.NumOfIshiNth(rollCount);
             m_columns.spentIshis.SetValue(ishis);
-            m_columns.spentMoney.SetValue(m_config.IshiPrice * ishis);
+            m_spentMoneyCache = m_config.IshiPrice * ishis;
+            m_columns.spentMoney.SetValue(m_spentMoneyCache);
+        }
+
+        public void OpenWishList() {
+            m_wishList.gameObject.SetActive(true);
+            m_wishList.CreateScrollView((int)m_spentMoneyCache);
         }
         #endregion
     }

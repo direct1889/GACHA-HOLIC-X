@@ -53,14 +53,13 @@ namespace Main.Gacha.Accomplish {
         #endregion
 
         #region mono
-        private void Start() {
+        public void Awake() {
             StartCoroutine(GetText(m_url));
         }
         #endregion
 
         #region public
-        public void CreateScrollView() {
-            int totalSpent = 3000;
+        public void CreateScrollView(int totalSpent) {
             int nonAvailableItemNum = -1;
             for (int i = 0; i < m_items.Count; ++i) {
                 m_scrollView.GenerateWishItemRect(m_items[i]);
@@ -79,6 +78,10 @@ namespace Main.Gacha.Accomplish {
                 m_availableItemNum.text = $"{m_items.Count}点中{m_items.Count - nonAvailableItemNum}点({(float)nonAvailableItemNum / m_items.Count})";
             }
         }
+        public void Close() {
+            gameObject.SetActive(false);
+            // TODO: Content以下をDestroyする
+        }
         #endregion
 
         #region private
@@ -93,6 +96,7 @@ namespace Main.Gacha.Accomplish {
 
             // Debug.LogError(www.downloadHandler.text);
             FindItems(www.downloadHandler.text);
+            gameObject.SetActive(false);
         }
 
         /// <summary> ほしいものリストのhtmlソースから商品情報を抽出 </summary>
